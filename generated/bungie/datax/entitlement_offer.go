@@ -38,8 +38,8 @@ func LoadEntitlementOffer(destiny *data.Content, redis tower.Redis, overwrite bo
 	}
 }
 
-func GetEntitlementOffer(hash string, redis tower.Redis) (out data.EntitlementOfferDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetEntitlementOffer(hash int, redis tower.Redis) (out data.EntitlementOfferDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

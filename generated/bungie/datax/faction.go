@@ -38,8 +38,8 @@ func LoadFaction(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetFaction(hash string, redis tower.Redis) (out data.FactionDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetFaction(hash int, redis tower.Redis) (out data.FactionDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

@@ -38,8 +38,8 @@ func LoadProgressionLevelRequirement(destiny *data.Content, redis tower.Redis, o
 	}
 }
 
-func GetProgressionLevelRequirement(hash string, redis tower.Redis) (out data.ProgressionLevelRequirementDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetProgressionLevelRequirement(hash int, redis tower.Redis) (out data.ProgressionLevelRequirementDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

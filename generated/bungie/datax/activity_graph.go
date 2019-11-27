@@ -38,8 +38,8 @@ func LoadActivityGraph(destiny *data.Content, redis tower.Redis, overwrite bool)
 	}
 }
 
-func GetActivityGraph(hash string, redis tower.Redis) (out data.ActivityGraphDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetActivityGraph(hash int, redis tower.Redis) (out data.ActivityGraphDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

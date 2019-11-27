@@ -38,8 +38,8 @@ func LoadActivityModifier(destiny *data.Content, redis tower.Redis, overwrite bo
 	}
 }
 
-func GetActivityModifier(hash string, redis tower.Redis) (out data.ActivityModifierDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetActivityModifier(hash int, redis tower.Redis) (out data.ActivityModifierDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

@@ -38,8 +38,8 @@ func LoadAchievement(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetAchievement(hash string, redis tower.Redis) (out data.AchievementDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetAchievement(hash int, redis tower.Redis) (out data.AchievementDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

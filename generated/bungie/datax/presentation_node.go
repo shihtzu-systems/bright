@@ -38,8 +38,8 @@ func LoadPresentationNode(destiny *data.Content, redis tower.Redis, overwrite bo
 	}
 }
 
-func GetPresentationNode(hash string, redis tower.Redis) (out data.PresentationNodeDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetPresentationNode(hash int, redis tower.Redis) (out data.PresentationNodeDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

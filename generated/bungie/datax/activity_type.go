@@ -38,8 +38,8 @@ func LoadActivityType(destiny *data.Content, redis tower.Redis, overwrite bool) 
 	}
 }
 
-func GetActivityType(hash string, redis tower.Redis) (out data.ActivityTypeDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetActivityType(hash int, redis tower.Redis) (out data.ActivityTypeDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

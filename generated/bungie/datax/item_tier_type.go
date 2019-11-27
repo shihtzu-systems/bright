@@ -38,8 +38,8 @@ func LoadItemTierType(destiny *data.Content, redis tower.Redis, overwrite bool) 
 	}
 }
 
-func GetItemTierType(hash string, redis tower.Redis) (out data.ItemTierTypeDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetItemTierType(hash int, redis tower.Redis) (out data.ItemTierTypeDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

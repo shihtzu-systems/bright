@@ -38,8 +38,8 @@ func LoadTalentGrid(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetTalentGrid(hash string, redis tower.Redis) (out data.TalentGridDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetTalentGrid(hash int, redis tower.Redis) (out data.TalentGridDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

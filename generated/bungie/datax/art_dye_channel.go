@@ -38,8 +38,8 @@ func LoadArtDyeChannel(destiny *data.Content, redis tower.Redis, overwrite bool)
 	}
 }
 
-func GetArtDyeChannel(hash string, redis tower.Redis) (out data.ArtDyeChannelDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetArtDyeChannel(hash int, redis tower.Redis) (out data.ArtDyeChannelDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

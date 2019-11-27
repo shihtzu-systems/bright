@@ -38,8 +38,8 @@ func LoadCharacterCustomizationCategory(destiny *data.Content, redis tower.Redis
 	}
 }
 
-func GetCharacterCustomizationCategory(hash string, redis tower.Redis) (out data.CharacterCustomizationCategoryDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetCharacterCustomizationCategory(hash int, redis tower.Redis) (out data.CharacterCustomizationCategoryDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

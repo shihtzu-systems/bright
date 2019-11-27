@@ -38,8 +38,8 @@ func LoadInventoryBucket(destiny *data.Content, redis tower.Redis, overwrite boo
 	}
 }
 
-func GetInventoryBucket(hash string, redis tower.Redis) (out data.InventoryBucketDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetInventoryBucket(hash int, redis tower.Redis) (out data.InventoryBucketDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

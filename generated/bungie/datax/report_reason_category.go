@@ -38,8 +38,8 @@ func LoadReportReasonCategory(destiny *data.Content, redis tower.Redis, overwrit
 	}
 }
 
-func GetReportReasonCategory(hash string, redis tower.Redis) (out data.ReportReasonCategoryDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetReportReasonCategory(hash int, redis tower.Redis) (out data.ReportReasonCategoryDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

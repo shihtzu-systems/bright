@@ -38,8 +38,8 @@ func LoadEnergyType(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetEnergyType(hash string, redis tower.Redis) (out data.EnergyTypeDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetEnergyType(hash int, redis tower.Redis) (out data.EnergyTypeDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

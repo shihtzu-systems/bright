@@ -38,8 +38,8 @@ func LoadPlatformBucketMapping(destiny *data.Content, redis tower.Redis, overwri
 	}
 }
 
-func GetPlatformBucketMapping(hash string, redis tower.Redis) (out data.PlatformBucketMappingDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetPlatformBucketMapping(hash int, redis tower.Redis) (out data.PlatformBucketMappingDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

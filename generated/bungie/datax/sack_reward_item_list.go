@@ -38,8 +38,8 @@ func LoadSackRewardItemList(destiny *data.Content, redis tower.Redis, overwrite 
 	}
 }
 
-func GetSackRewardItemList(hash string, redis tower.Redis) (out data.SackRewardItemListDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetSackRewardItemList(hash int, redis tower.Redis) (out data.SackRewardItemListDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

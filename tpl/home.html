@@ -57,6 +57,62 @@
         </div>
         {{ end }}
 
+          {{ with .Ghost.Try.Two }}
+            <div class="card bright-character" style="margin-top: 18px; background: black url({{ $.Tower.BungieNetUrl }}/{{ .Emblem.BannerUri }}) center / cover">
+              <div class="card-image">
+
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}" alt="Placeholder image">
+                    </figure>
+                  </div>
+                  <div class="media-content" >
+                    <p class="title is-size-3 is-size-4-mobile has-text-light" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">{{ .Class }}</p>
+                    <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
+                  </div>
+                  <div class="media-right">
+                    <a href="/try/character/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <span class="icon">
+                      <i class="fas fa-street-view"></i>
+                    </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{ end }}
+
+          {{ with .Ghost.Try.Three }}
+            <div class="card bright-character" style="margin-top: 18px; background: black url({{ $.Tower.BungieNetUrl }}/{{ .Emblem.BannerUri }}) center / cover">
+              <div class="card-image">
+
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}" alt="Placeholder image">
+                    </figure>
+                  </div>
+                  <div class="media-content" >
+                    <p class="title is-size-3 is-size-4-mobile has-text-light" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">{{ .Class }}</p>
+                    <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
+                  </div>
+                  <div class="media-right">
+                    <a href="/try/character/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <span class="icon">
+                      <i class="fas fa-street-view"></i>
+                    </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{ end }}
+
       </div>
     </div>
     <br>

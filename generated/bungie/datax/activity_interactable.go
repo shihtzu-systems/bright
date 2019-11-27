@@ -38,8 +38,8 @@ func LoadActivityInteractable(destiny *data.Content, redis tower.Redis, overwrit
 	}
 }
 
-func GetActivityInteractable(hash string, redis tower.Redis) (out data.ActivityInteractableDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetActivityInteractable(hash int, redis tower.Redis) (out data.ActivityInteractableDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

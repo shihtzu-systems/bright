@@ -38,8 +38,8 @@ func LoadProgression(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetProgression(hash string, redis tower.Redis) (out data.ProgressionDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetProgression(hash int, redis tower.Redis) (out data.ProgressionDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

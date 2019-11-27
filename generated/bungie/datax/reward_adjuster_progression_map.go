@@ -38,8 +38,8 @@ func LoadRewardAdjusterProgressionMap(destiny *data.Content, redis tower.Redis, 
 	}
 }
 
-func GetRewardAdjusterProgressionMap(hash string, redis tower.Redis) (out data.RewardAdjusterProgressionMapDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetRewardAdjusterProgressionMap(hash int, redis tower.Redis) (out data.RewardAdjusterProgressionMapDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

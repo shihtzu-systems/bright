@@ -38,8 +38,8 @@ func LoadRace(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetRace(hash string, redis tower.Redis) (out data.RaceDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetRace(hash int, redis tower.Redis) (out data.RaceDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

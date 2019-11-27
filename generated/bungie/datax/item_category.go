@@ -38,8 +38,8 @@ func LoadItemCategory(destiny *data.Content, redis tower.Redis, overwrite bool) 
 	}
 }
 
-func GetItemCategory(hash string, redis tower.Redis) (out data.ItemCategoryDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetItemCategory(hash int, redis tower.Redis) (out data.ItemCategoryDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

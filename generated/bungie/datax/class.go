@@ -38,8 +38,8 @@ func LoadClass(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetClass(hash string, redis tower.Redis) (out data.ClassDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetClass(hash int, redis tower.Redis) (out data.ClassDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

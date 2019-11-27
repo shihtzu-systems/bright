@@ -38,8 +38,8 @@ func LoadRewardSheet(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetRewardSheet(hash string, redis tower.Redis) (out data.RewardSheetDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetRewardSheet(hash int, redis tower.Redis) (out data.RewardSheetDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

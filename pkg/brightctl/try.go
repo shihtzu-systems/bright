@@ -49,7 +49,7 @@ func (c TryController) HandleTry(w http.ResponseWriter, r *http.Request) {
 	g := ghost.NewGhost(c.Tower.System.Id, c.Id(w, r))
 	g.Materialize(c.Tower.Redis)
 	if g.Try.User.Name == "" {
-		tryUser := brightsvc.NewTryUser(c.Tower.Dad)
+		tryUser := brightsvc.NewTryUser(c.Tower.Dad, c.Tower.Redis)
 		g.SetTryUser(tryUser)
 		g.SetTryCurrent(tryUser.Characters[0])
 		g.Save(c.Tower.Redis)
@@ -69,7 +69,7 @@ func (c TryController) HandleTryRecycle(w http.ResponseWriter, r *http.Request) 
 	g := ghost.NewGhost(c.Tower.System.Id, c.Id(w, r))
 	g.Materialize(c.Tower.Redis)
 
-	tryUser := brightsvc.NewTryUser(c.Tower.Dad)
+	tryUser := brightsvc.NewTryUser(c.Tower.Dad, c.Tower.Redis)
 	g.SetTryUser(tryUser)
 	g.SetTryCurrent(tryUser.Characters[0])
 	g.Save(c.Tower.Redis)

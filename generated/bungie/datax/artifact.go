@@ -38,8 +38,8 @@ func LoadArtifact(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetArtifact(hash string, redis tower.Redis) (out data.ArtifactDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetArtifact(hash int, redis tower.Redis) (out data.ArtifactDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

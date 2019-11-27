@@ -38,8 +38,8 @@ func LoadRecord(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetRecord(hash string, redis tower.Redis) (out data.RecordDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetRecord(hash int, redis tower.Redis) (out data.RecordDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

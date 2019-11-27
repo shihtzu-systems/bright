@@ -38,8 +38,8 @@ func LoadPlace(destiny *data.Content, redis tower.Redis, overwrite bool) {
 	}
 }
 
-func GetPlace(hash string, redis tower.Redis) (out data.PlaceDefinition) {
-	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
+func GetPlace(hash int, redis tower.Redis) (out data.PlaceDefinition) {
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), fmt.Sprint(hash))
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {
