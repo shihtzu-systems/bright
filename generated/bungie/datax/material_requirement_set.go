@@ -15,10 +15,10 @@ func LoadMaterialRequirementSet(destiny *data.Content, redis tower.Redis, overwr
 		log.Infof("Loading %d MaterialRequirementSet", len(destiny.MaterialRequirementSet.Values()))
 		for _, definition := range destiny.MaterialRequirementSet.Values() {
 			if overwrite {
-				redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), []byte{})
+				redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), []byte{})
 			}
 
-			definitionJson := redis.HGet(definition.Name(), fmt.Sprint(definition.Hash))
+			definitionJson := redis.HGet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash))
 			if definitionJson != "" {
 				continue
 			}
@@ -33,13 +33,13 @@ func LoadMaterialRequirementSet(destiny *data.Content, redis tower.Redis, overwr
 				log.Fatal(err)
 			}
 
-			redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
+			redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
 		}
 	}
 }
 
 func GetMaterialRequirementSet(hash string, redis tower.Redis) (out data.MaterialRequirementSetDefinition) {
-	rawJson := redis.HGet(out.Name(), hash)
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

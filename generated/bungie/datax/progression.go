@@ -15,10 +15,10 @@ func LoadProgression(destiny *data.Content, redis tower.Redis, overwrite bool) {
 		log.Infof("Loading %d Progression", len(destiny.Progression.Values()))
 		for _, definition := range destiny.Progression.Values() {
 			if overwrite {
-				redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), []byte{})
+				redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), []byte{})
 			}
 
-			definitionJson := redis.HGet(definition.Name(), fmt.Sprint(definition.Hash))
+			definitionJson := redis.HGet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash))
 			if definitionJson != "" {
 				continue
 			}
@@ -33,13 +33,13 @@ func LoadProgression(destiny *data.Content, redis tower.Redis, overwrite bool) {
 				log.Fatal(err)
 			}
 
-			redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
+			redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
 		}
 	}
 }
 
 func GetProgression(hash string, redis tower.Redis) (out data.ProgressionDefinition) {
-	rawJson := redis.HGet(out.Name(), hash)
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

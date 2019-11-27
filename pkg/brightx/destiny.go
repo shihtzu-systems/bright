@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	destinyContentIdKey = "destiny:content:id"
+	destinyContentKey = "destiny:content"
 )
 
 type DestinyArgs struct {
@@ -31,13 +31,13 @@ func Destiny(args DestinyArgs) {
 		log.Fatal(err)
 	}
 	args.Tower.Redis.Connect()
-	loadedContentId := args.Tower.Redis.Get(destinyContentIdKey)
+	loadedContentId := args.Tower.Redis.Get(destinyContentKey + ":id")
 	args.Tower.Redis.Disconnect()
 
 	overwrite := args.Overwrite || loadedContentId != contentId
 	destinyx.Load(destiny, args.Tower.Redis, overwrite)
 
 	args.Tower.Redis.Connect()
-	args.Tower.Redis.Set(destinyContentIdKey, []byte(contentId))
+	args.Tower.Redis.Set(destinyContentKey+":id", []byte(contentId))
 	args.Tower.Redis.Disconnect()
 }

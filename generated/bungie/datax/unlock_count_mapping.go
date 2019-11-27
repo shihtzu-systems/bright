@@ -15,10 +15,10 @@ func LoadUnlockCountMapping(destiny *data.Content, redis tower.Redis, overwrite 
 		log.Infof("Loading %d UnlockCountMapping", len(destiny.UnlockCountMapping.Values()))
 		for _, definition := range destiny.UnlockCountMapping.Values() {
 			if overwrite {
-				redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), []byte{})
+				redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), []byte{})
 			}
 
-			definitionJson := redis.HGet(definition.Name(), fmt.Sprint(definition.Hash))
+			definitionJson := redis.HGet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash))
 			if definitionJson != "" {
 				continue
 			}
@@ -33,13 +33,13 @@ func LoadUnlockCountMapping(destiny *data.Content, redis tower.Redis, overwrite 
 				log.Fatal(err)
 			}
 
-			redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
+			redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
 		}
 	}
 }
 
 func GetUnlockCountMapping(hash string, redis tower.Redis) (out data.UnlockCountMappingDefinition) {
-	rawJson := redis.HGet(out.Name(), hash)
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {

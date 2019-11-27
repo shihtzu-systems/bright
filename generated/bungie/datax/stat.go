@@ -15,10 +15,10 @@ func LoadStat(destiny *data.Content, redis tower.Redis, overwrite bool) {
 		log.Infof("Loading %d Stat", len(destiny.Stat.Values()))
 		for _, definition := range destiny.Stat.Values() {
 			if overwrite {
-				redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), []byte{})
+				redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), []byte{})
 			}
 
-			definitionJson := redis.HGet(definition.Name(), fmt.Sprint(definition.Hash))
+			definitionJson := redis.HGet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash))
 			if definitionJson != "" {
 				continue
 			}
@@ -33,13 +33,13 @@ func LoadStat(destiny *data.Content, redis tower.Redis, overwrite bool) {
 				log.Fatal(err)
 			}
 
-			redis.HSet(definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
+			redis.HSet(destinyContentKey+":"+definition.Name(), fmt.Sprint(definition.Hash), prettyJSON.Bytes())
 		}
 	}
 }
 
 func GetStat(hash string, redis tower.Redis) (out data.StatDefinition) {
-	rawJson := redis.HGet(out.Name(), hash)
+	rawJson := redis.HGet(destinyContentKey+":"+out.Name(), hash)
 	if rawJson != "" {
 		err := json.Unmarshal([]byte(rawJson), &out)
 		if err != nil {
