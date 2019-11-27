@@ -1,0 +1,100 @@
+#a { grid-area: a; }
+#b { grid-area: b; }
+#c { grid-area: c; }
+#d { grid-area: d; }
+#e { grid-area: e; }
+
+#kw { grid-area: kw; background: peru }
+#ew { grid-area: ew; background: purple }
+#pw { grid-area: pw; background: goldenrod }
+#ha { grid-area: ha; background: dodgerblue }
+#ga { grid-area: ga; background: lightcoral }
+#ca { grid-area: ca; background: olivedrab }
+#la { grid-area: la; background: mediumturquoise }
+#ia { grid-area: ia; background: darkorchid }
+
+#bb { grid-area: bb; }
+#b0 { grid-area: b0; }
+#b1 { grid-area: b1; }
+#b2 { grid-area: b2; }
+#b3 { grid-area: b3; }
+#b4 { grid-area: b4; }
+#b5 { grid-area: b5; }
+
+#ii { grid-area: ii; }
+#i0 { grid-area: i0; }
+#i1 { grid-area: i1; }
+#i2 { grid-area: i2; }
+#i3 { grid-area: i3; }
+#i4 { grid-area: i4; }
+#i5 { grid-area: i5; }
+
+#nn { grid-area: nn; }
+#n0 { grid-area: n0; }
+#n1 { grid-area: n1; }
+#n2 { grid-area: n2; }
+#n3 { grid-area: n3; }
+#n4 { grid-area: n4; }
+
+#gg { grid-area: gg; }
+#g0 { grid-area: g0; }
+#g1 { grid-area: g1; }
+#g2 { grid-area: g2; }
+#g3 { grid-area: g3; }
+#g4 { grid-area: g4; }
+
+#oo { grid-area: oo; }
+#o0 { grid-area: o0; }
+#o1 { grid-area: o1; }
+#o2 { grid-area: o2; }
+#o3 { grid-area: o3; }
+#o4 { grid-area: o4; }
+
+
+#bingo {
+    display: grid;
+    grid-template-areas:
+            "bb ii nn gg oo"
+            "b0 i0 n0 g0 o0"
+            "b1 i1 n1 g1 o1"
+            "b2 i2 n2 g2 o2"
+            "b3 i3 n3 g3 o3"
+            "b4 i4 n4 g4 o4";
+    grid-row-gap: 1rem;
+    grid-column-gap: 1rem;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr
+}
+
+.bingo-box {
+    border: 1px solid dimgray;
+    padding: .5rem;
+
+}
+
+
+#grid {
+    display: grid;
+    grid-template-areas:
+            "a b c d";
+    grid-row-gap: 1rem;
+    grid-column-gap: 1rem;
+    grid-template-columns: auto minmax(0, 1fr)
+}
+
+#equip {
+    display: grid;
+    grid-template-areas:
+            "kw ew pw pw pw"
+            "ha ga ca la ia";
+    grid-row-gap: 1rem;
+    grid-column-gap: 1rem;
+    grid-template-columns: auto minmax(0, 1fr)
+}
+
+@media (max-width: 512px) {
+    #grid {
+        grid-template-areas:
+                "a b"
+                "c d";
+    }
+}

@@ -1,0 +1,37 @@
+{{ define "index" }}
+<html lang="en-US">
+
+  {{ template "header" .AppVersion }}
+
+  <body>
+  <section class="hero stars is-fullheight">
+
+    <!-- .hero-body -->
+    <header class="hero-body">
+      <div class="is-overlay has-text-centered single-spaced" style="top: 92px;">
+        <h2 class="subtitle is-4 has-text-weight-light is-unselectable has-text-white">Welcome to</h2>
+        <h1 class="title is-1 has-text-white is-unselectable">Bright</h1>
+        <div class="section center-column">
+          {{ if .BnetMode }}
+          <a class="button is-light" style="margin-top: 1rem" href="/auth">Login w/&nbsp<img src="/static/images/bungie-studios-logo.svg" style="height: 2rem; width: 4rem"></a>
+          {{ end }}
+          {{ if .TryMode }}
+          <a class="button is-light" style="margin-top: 1rem" href="/try">Try it out!</a>
+          {{ end }}
+          {{ if .HackMode }}
+          <a class="button is-light" style="margin-top: 1rem" href="/hack">Login w/ Hack</a>
+          {{ end }}
+        </div>
+      </div>
+    </header>
+    <!-- /.hero-body -->
+
+  </section>
+
+  {{ template "footer" .AppVersion }}
+
+  {{ template "google-analytics" .GoogleAnalyticsId }}
+
+  </body>
+</html>
+{{ end }}

@@ -1,0 +1,37 @@
+{{ define "index" }}
+<html lang="en-US">
+
+  {{ template "header" .Tower }}
+
+  <body>
+  <section class="hero stars is-fullheight">
+
+    <!-- .hero-body -->
+    <header class="hero-body">
+      <div class="is-overlay has-text-centered single-spaced" style="top: 92px;">
+        <h2 class="subtitle is-4 has-text-weight-light is-unselectable has-text-white">Welcome to</h2>
+        <h1 class="title is-1 has-text-white is-unselectable">Bright</h1>
+        <div class="section center-column">
+          {{ if .Tower.Bnet }}
+          <a class="button is-light" style="margin-top: 1rem" href="{{ .BnetAuthPath }}">Login w/&nbsp<img src="/static/images/bungie-studios-logo.svg" style="height: 2rem; width: 4rem"></a>
+          {{ end }}
+          {{ if .Tower.Try }}
+          <a class="button is-light" style="margin-top: 1rem" href="{{ .TryPath }}">Try it out!</a>
+          {{ end }}
+          {{ if .Tower.Hack }}
+          <a class="button is-light" style="margin-top: 1rem" href="{{ .HackPath }}">Login w/ Hack</a>
+          {{ end }}
+        </div>
+      </div>
+    </header>
+    <!-- /.hero-body -->
+
+  </section>
+
+  {{ template "footer" .Tower }}
+
+  {{ template "google-analytics" .Tower.GoogleAnalyticsId }}
+
+  </body>
+</html>
+{{ end }}

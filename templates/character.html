@@ -1,0 +1,492 @@
+{{ define "character" }}
+  <html lang="en-US">
+
+  {{ template "header" .AppVersion }}
+
+  <body class="has-navbar-fixed-top has-navbar-fixed-bottom">
+
+  {{ template "character-navbar" . }}
+
+  <section class="section"
+           style="background-color: rgba({{ .BrightCharacter.Emblem.Background.Red }}, {{ .BrightCharacter.Emblem.Background.Green }}, {{ .BrightCharacter.Emblem.Background.Blue }}, .5);">
+
+    <div class="container notification" style="max-width: 728px; background-color: rgba(25, 25, 25, .5);">
+      <h1 class="title has-text-light is-unselectable"
+          style="text-align: center; text-shadow: 2px 2px 0 rgba({{ .BrightCharacter.Emblem.Background.Red }}, {{ .BrightCharacter.Emblem.Background.Green }}, {{ .BrightCharacter.Emblem.Background.Blue }}, .75);">
+        Weapons</h1>
+      <hr>
+
+      <!-- kinetic weapon -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+              {{ if .Mayhem }}
+              {{ if ne .TakenCharacter.Id "" }}
+              <a class="button is-dark is-outlined taken-character-icon"
+                 href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                <figure class="image is-48x48 is-unselectable">
+                  <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.KineticWeapon.IconUri }}">
+                </figure>
+              </a>
+              {{ end }}
+              {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+              {{ if eq .TakenCharacter.Equipped.KineticWeapon.InstanceId .BrightCharacter.Equipped.KineticWeapon.InstanceId  }}
+              <a class="button is-primary is-outlined bright-character-icon"
+                 href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/weapon/{{ .BrightCharacter.Equipped.KineticWeapon.InstanceId }}">
+                <figure class="image is-48x48 is-unselectable">
+                  <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.KineticWeapon.IconUri }}">
+                </figure>
+              </a>
+              <!-- misaligned -->
+              {{ else }}
+                <a class="button is-danger is-outlined bright-character-icon"
+                   href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.KineticWeapon.IconUri }}">
+                  </figure>
+                </a>
+              {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.KineticWeapon.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.KineticWeapon.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <!-- energy weapon -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.EnergyWeapon.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.EnergyWeapon.InstanceId .BrightCharacter.Equipped.EnergyWeapon.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/weapon/{{ .BrightCharacter.Equipped.EnergyWeapon.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.EnergyWeapon.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.EnergyWeapon.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.EnergyWeapon.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.EnergyWeapon.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <!-- power weapon -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.PowerWeapon.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.PowerWeapon.InstanceId .BrightCharacter.Equipped.PowerWeapon.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/weapon/{{ .BrightCharacter.Equipped.PowerWeapon.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.PowerWeapon.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.PowerWeapon.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.PowerWeapon.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.PowerWeapon.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+    </div>
+      <!-- armor -->
+    <div class="container notification" style="max-width: 728px; background-color: rgba(25, 25, 25, .5);">
+      <h1 class="title has-text-light is-unselectable"
+          style="text-align: center; text-shadow: 2px 2px 0 rgba({{ .BrightCharacter.Emblem.Background.Red }}, {{ .BrightCharacter.Emblem.Background.Green }}, {{ .BrightCharacter.Emblem.Background.Blue }}, .75);">
+        Armor</h1>
+      <hr>
+
+      <!-- helmet armor -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.Helmet.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.Helmet.InstanceId .BrightCharacter.Equipped.Helmet.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/armor/{{ .BrightCharacter.Equipped.Helmet.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Helmet.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Helmet.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.Helmet.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.Helmet.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+
+      <!-- gauntlet armor -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.Gauntlet.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.Gauntlet.InstanceId .BrightCharacter.Equipped.Gauntlet.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/armor/{{ .BrightCharacter.Equipped.Gauntlet.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Gauntlet.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Gauntlet.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.Gauntlet.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.Gauntlet.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+
+      <!-- chest armor -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.Chest.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.Chest.InstanceId .BrightCharacter.Equipped.Chest.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/armor/{{ .BrightCharacter.Equipped.Chest.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Chest.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Chest.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.Chest.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.Chest.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <!-- leg armor -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.Leg.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.Leg.InstanceId .BrightCharacter.Equipped.Leg.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/armor/{{ .BrightCharacter.Equipped.Leg.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Leg.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Leg.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.Leg.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.Leg.Slot.Name }}</h2>
+            </div>
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+
+      <!-- class armor -->
+      <article class="media center">
+        <div class="media-content bright-item">
+          <div id="grid">
+
+            <div id="a" class="center">
+              <!-- mayhem -->
+                {{ if .Mayhem }}
+                    {{ if ne .TakenCharacter.Id "" }}
+                      <a class="button is-dark is-outlined taken-character-icon"
+                         href="{{ .CharacterBaseUri }}/character/{{ .TakenCharacter.MembershipType }}/{{ .TakenCharacter.Id }}/taken/refresh">
+                        <figure class="image is-48x48 is-unselectable">
+                          <img  src="{{ .BungieUrl }}/{{ .TakenCharacter.Equipped.Class.IconUri }}">
+                        </figure>
+                      </a>
+                    {{ end }}
+                {{ end }}
+
+              <!-- bright -->
+              <!-- aligned -->
+                {{ if eq .TakenCharacter.Equipped.Class.InstanceId .BrightCharacter.Equipped.Class.InstanceId  }}
+                  <a class="button is-primary is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/swap/armor/{{ .BrightCharacter.Equipped.Class.InstanceId }}">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Class.IconUri }}">
+                    </figure>
+                  </a>
+                  <!-- misaligned -->
+                {{ else }}
+                  <a class="button is-danger is-outlined bright-character-icon"
+                     href="{{ .CharacterBaseUri }}/character/{{ .BrightCharacter.MembershipType }}/{{ .BrightCharacter.Id }}/taken/refresh">
+                    <figure class="image is-48x48 is-unselectable">
+                      <img  src="{{ .BungieUrl }}/{{ .BrightCharacter.Equipped.Class.IconUri }}">
+                    </figure>
+                  </a>
+                {{ end }}
+
+            </div>
+
+            <div id="b">
+              <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .BrightCharacter.Equipped.Class.Name }}</h1>
+              <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .BrightCharacter.Equipped.Class.Slot.Name }}</h2>
+            </div>
+
+
+            <div id="c" class="center">
+
+            </div>
+
+            <div id="d" class="center">
+
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+    </div>
+    <br>
+  </section>
+
+{{/*  {{ template "character-actionbar" . }}    */}}
+
+  {{ template "footer" .AppVersion }}
+
+  {{ template "google-analytics" .GoogleAnalyticsId }}
+
+  {{ template "scripts" .AppVersion  }}
+  </body>
+  </html>
+{{ end }}

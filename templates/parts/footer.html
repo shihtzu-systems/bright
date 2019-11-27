@@ -1,0 +1,35 @@
+
+
+{{ define "footer" }}
+<nav class="level is-mobile has-background-black" style="padding-top: .5rem; display: none">
+  <div class="level-item has-text-centered">
+    <div class="has-text-dark single-spaced">
+      <p class="heading is-size-7">&copy; 2018<script>new Date().getFullYear() > 2018 && document.write( "-" + new Date().getFullYear() );</script>, Shih-Tzu Systems, LLC.</p>
+      <p class="heading is-size-7"><a href="/ghost"><img class="is-unselectable" src="/static/images/spa-saturn-44x44-dark.svg" style="height: .75rem"></a>&nbsp;{{ . }}</p>
+    </div>
+  </div>
+</nav>
+{{ end }}
+
+{{ define "scripts" }}
+<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+<script src="/static/scripts/navbar.js?{{ . }}"></script>
+{{ end }}
+
+{{ define "scripts-bingo" }}
+<script src="/static/scripts/bingo.js?{{ . }}"></script>
+{{ end }}
+
+{{ define "google-analytics" }}
+{{ if ne . "" }}
+ <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', '{{ . }}');
+</script>
+{{ end }}
+{{ end }}

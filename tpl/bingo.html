@@ -1,0 +1,66 @@
+{{ define "bingo" }}
+  <html lang="en-US">
+
+  {{ template "header" .Tower }}
+
+  <section class="section">
+    <div class="container notification">
+
+      <div id="bingo" class="has-text-dark">
+
+        <div id="bb" class="center">
+          <h1 class="title">B</h1>
+        </div>
+        {{ range $i, $b := .Board.B }}
+        <div id="b{{ $i }}" class="is-unselectable bingo-box center" style="text-align: center; cursor: pointer;">
+          {{ $b }}
+        </div>
+        {{ end }}
+
+        <div id="ii" class="center">
+          <h1 class="title">I</h1>
+        </div>
+          {{ range $i, $b := .Board.I }}
+            <div id="i{{ $i }}" class="is-unselectable bingo-box center" style="text-align: center; cursor: pointer;">
+              {{ $b }}
+            </div>
+          {{ end }}
+
+        <div id="nn" class="center">
+          <h1 class="title">N</h1>
+        </div>
+          {{ range $i, $b := .Board.N }}
+            <div id="n{{ $i }}" class="is-unselectable bingo-box center" style="text-align: center; cursor: pointer;">
+              {{ $b }}
+            </div>
+          {{ end }}
+
+        <div id="gg" class="center">
+          <h1 class="title">G</h1>
+        </div>
+          {{ range $i, $b := .Board.G }}
+            <div id="g{{ $i }}" class="is-unselectable bingo-box center" style="text-align: center; cursor: pointer;">
+              {{ $b }}
+            </div>
+          {{ end }}
+
+        <div id="oo" class="center">
+          <h1 class="title">O</h1>
+        </div>
+          {{ range $i, $b := .Board.O }}
+            <div id="o{{ $i }}" class="is-unselectable bingo-box center" style="text-align: center; cursor: pointer;">
+              {{ $b }}
+            </div>
+          {{ end }}
+
+      </div>
+    </div>
+  </section>
+
+  {{ template "jquery-scripts" .Tower }}
+
+  {{ template "bingo-scripts" .Tower }}
+
+  {{ template "google-analytics" .Tower.GoogleAnalyticsId }}
+
+{{ end }}

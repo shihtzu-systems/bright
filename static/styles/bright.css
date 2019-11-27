@@ -1,0 +1,62 @@
+body, html {
+    background: black
+}
+.stars {
+    background: black url(../images/stars-background.png) center;
+}
+
+.taken-character-icon {
+    padding: 2rem .6rem;
+    margin-right: .5rem
+}
+.bright-character-icon {
+    padding: 2rem .75rem;
+}
+
+a.navbar-item:hover {
+    background-color: goldenrod;
+    color: white;
+}
+
+.bright-character {
+    min-width: 640px;
+}
+
+.bright-item {
+    min-width: 500px;
+}
+
+@media (max-width: 1087px) {
+    .navbar-menu {
+        background: black;
+    }
+}
+
+@media (max-width:  768px) {
+    .bright-character {
+        min-width: 420px;
+    }
+
+    .bright-item {
+        min-width: 150px;
+    }
+}
+
+@media (max-width:  500px) {
+    .bright-character {
+        min-width: 300px;
+    }
+
+    .bright-item {
+        min-width: 150px;
+    }
+}
+
+
+
+
+@media (max-width:  768px) {
+    .bright-item {
+        min-width: 150px;
+    }
+}

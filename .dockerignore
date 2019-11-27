@@ -1,0 +1,11 @@
+.DS_Store
+.dockerignore
+.git
+.gitignore
+.idea
+Dockerfile
+LICENSE
+Makefile
+bin
+hacks
+node_modules

@@ -1,0 +1,1 @@
+    ${name} ${type} `json:"${json_name}" yaml:"${yaml_name},omitempty"`
