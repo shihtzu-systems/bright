@@ -24,11 +24,11 @@ type RootController struct {
 func (c RootController) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", RootPath())
 
-	index := brightview.Index{
+	v := brightview.Index{
 		Tower:        c.Tower,
 		BnetAuthPath: "/bnet/auth",
 		TryPath:      "/try",
 		HackPath:     "/hack",
 	}
-	index.View(w)
+	v.View(w)
 }

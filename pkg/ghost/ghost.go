@@ -35,17 +35,17 @@ func (g *Ghost) Materialize(redis tower.Redis) {
 	log.Debugf("ghost materialized: id=%s session_id=%s", g.Id, g.SessionId)
 }
 
-func (s *Soul) Embody(gamer bungo.Gamer) {
+func (s *Soul) Embody(gamer bungo.User) {
 	s.Gamer = gamer
-	if len(gamer.Guardians) >= 1 {
-		s.Possessed = gamer.Guardians[0].Id
-		s.One = gamer.Guardians[0]
+	if len(gamer.Characters) >= 1 {
+		s.Possessed = gamer.Characters[0].Id
+		s.One = gamer.Characters[0]
 	}
-	if len(gamer.Guardians) >= 2 {
-		s.Two = gamer.Guardians[1]
+	if len(gamer.Characters) >= 2 {
+		s.Two = gamer.Characters[1]
 	}
-	if len(gamer.Guardians) == 3 {
-		s.Three = gamer.Guardians[2]
+	if len(gamer.Characters) == 3 {
+		s.Three = gamer.Characters[2]
 	}
 }
 
@@ -53,7 +53,7 @@ func (s *Soul) Possess(id string) {
 	s.Possessed = id
 }
 
-func (s *Soul) Charge(guardian bungo.Guardian) {
+func (s *Soul) Charge(guardian bungo.Character) {
 	switch guardian.Id {
 	case s.One.Id:
 		s.One = guardian
@@ -75,7 +75,7 @@ func (g Ghost) Key(pieces ...string) string {
 	return key
 }
 
-func (s Soul) Summon() (out bungo.Guardian) {
+func (s Soul) Summon() (out bungo.Character) {
 	switch s.Possessed {
 	case s.One.Id:
 		out = s.One
@@ -87,7 +87,7 @@ func (s Soul) Summon() (out bungo.Guardian) {
 	return out
 }
 
-func (s Soul) SummonOthers() (out []bungo.Guardian) {
+func (s Soul) SummonOthers() (out []bungo.Character) {
 	if s.Possessed != s.One.Id {
 		out = append(out, s.One)
 	}
@@ -99,7 +99,7 @@ func (s Soul) SummonOthers() (out []bungo.Guardian) {
 	}
 	return out
 }
-func (s Soul) Call(id string) (out bungo.Guardian, exists bool) {
+func (s Soul) Call(id string) (out bungo.Character, exists bool) {
 	guardians, exists := s.Callx(id)
 	if exists {
 		out = guardians[0]
@@ -110,7 +110,7 @@ func (s Soul) Call(id string) (out bungo.Guardian, exists bool) {
 	return out, exists
 }
 
-func (s Soul) Callx(ids ...string) (out []bungo.Guardian, exists bool) {
+func (s Soul) Callx(ids ...string) (out []bungo.Character, exists bool) {
 	for _, id := range ids {
 		switch id {
 		case s.One.Id:

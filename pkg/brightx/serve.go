@@ -6,11 +6,9 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
-	"github.com/opentracing-contrib/go-gorilla/gorilla"
 	. "github.com/shihtzu-systems/bright/pkg/brightctl"
 	"github.com/shihtzu-systems/bright/pkg/tower"
 	log "github.com/sirupsen/logrus"
-	"github.com/uber/jaeger-client-go/config"
 	"net/http"
 	"os"
 	"os/signal"
@@ -35,7 +33,6 @@ func Serve(args ServeArgs) {
 	}
 
 	// guts
-	//TODO contentPath := args.WorkingBasePath
 	t := args.Tower
 	sessionStore := sessions.NewCookieStore(t.SessionSecret)
 
@@ -44,11 +41,11 @@ func Serve(args ServeArgs) {
 		SessionStore: sessionStore,
 		Tower:        t,
 	}
-	r.HandleFunc(BingoPath(), bingo.HandleBingo)
+	r.HandleFunc(BingoPath(), bingo.HandleRoot)
 
 	// hello controller
 	hello := HelloController{}
-	r.HandleFunc(HelloPath(), hello.HandleHello)
+	r.HandleFunc(HelloPath(), hello.HandleRoot)
 
 	// hack controller
 	hack := HackController{
@@ -56,26 +53,34 @@ func Serve(args ServeArgs) {
 		Tower:        t,
 		HackToken:    args.HackToken,
 	}
-	r.HandleFunc(HackPath(), hack.HandleHack)
+	r.HandleFunc(HackPath(), hack.HandleRoot)
 
 	// bnet controller
 	bnet := BnetController{
 		SessionStore: sessionStore,
 		Tower:        t,
+		BungieClient: args.BungieClient,
 	}
-	r.HandleFunc(BnetPath(), bnet.HandleBnet)
+	r.HandleFunc(BnetPath("auth"), bnet.HandleAuth)
+	r.HandleFunc(BnetPath("callback"), bnet.HandleCallback).Queries("code", "{code}", "state", "{state}")
+	r.HandleFunc(BnetPath(), bnet.HandleRoot)
+	r.HandleFunc(BnetPath("guardian", "{membershipType:[a-z0-9-]+}", "{id:[a-z0-9-]+}", "init"), bnet.HandleGuardianInit)
+	r.HandleFunc(BnetPath("guardian", "{membershipType:[a-z0-9-]+}", "{id:[a-z0-9-]+}"), bnet.HandleGuardian)
+	r.HandleFunc(BnetPath("guardian", "{membershipType:[a-z0-9-]+}", "{id:[a-z0-9-]+}", "swap", "weapon", "{weaponHash:[a-z0-9-]+}"), bnet.HandleSwapWeapon)
+	r.HandleFunc(BnetPath("guardian", "{membershipType:[a-z0-9-]+}", "{id:[a-z0-9-]+}", "swap", "armor", "{armorHash:[a-z0-9-]+}"), bnet.HandleSwapArmor)
+	r.HandleFunc(BnetPath("guardian", "{membershipType:[a-z0-9-]+}", "{id:[a-z0-9-]+}", "swap", "{swapOut:[a-z0-9-]+}", "{swapIn:[a-z0-9-]+}"), bnet.HandleSwap)
 
 	// try controller
 	try := TryController{
 		SessionStore: sessionStore,
 		Tower:        t,
 	}
-	r.HandleFunc(TryPath(), try.HandleTry)
-	r.HandleFunc(TryPath("recycle"), try.HandleTryRecycle)
-	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}"), try.HandleTryGuardian)
-	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "weapon", "{weaponHash:[a-z0-9-]+}"), try.HandleTrySwapWeapon)
-	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "armor", "{armorHash:[a-z0-9-]+}"), try.HandleTrySwapArmor)
-	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "{swapOut:[a-z0-9-]+}", "{swapIn:[a-z0-9-]+}"), try.HandleTrySwap)
+	r.HandleFunc(TryPath(), try.HandleRoot)
+	r.HandleFunc(TryPath("recycle"), try.HandleRecycle)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}"), try.HandleGuardian)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "weapon", "{weaponHash:[a-z0-9-]+}"), try.HandleSwapWeapon)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "armor", "{armorHash:[a-z0-9-]+}"), try.HandleSwapArmor)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "{swapOut:[a-z0-9-]+}", "{swapIn:[a-z0-9-]+}"), try.HandleSwap)
 
 	// root controller
 	root := RootController{
@@ -88,35 +93,6 @@ func Serve(args ServeArgs) {
 	r.PathPrefix("/static/").Handler(
 		http.StripPrefix("/static/",
 			http.FileServer(http.Dir("./static/"))))
-
-	// tracing middleware
-	jaegerConfig := config.Configuration{
-		ServiceName: "bright",
-		Sampler: &config.SamplerConfig{
-			Type:  "const",
-			Param: 1,
-		},
-		Reporter: &config.ReporterConfig{
-			LogSpans:            false,
-			BufferFlushInterval: 1 * time.Second,
-			LocalAgentHostPort:  t.JaegerAgent,
-		},
-	}
-	tracer, closer, err := jaegerConfig.NewTracer()
-	defer func() {
-		if err := closer.Close(); err != nil {
-			log.Fatal(err)
-		}
-	}()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	_ = r.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
-		route.Handler(
-			gorilla.Middleware(tracer, route.GetHandler()))
-		return nil
-	})
 
 	// server startup
 	namer := haikunator.New()

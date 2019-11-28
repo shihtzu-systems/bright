@@ -17,7 +17,7 @@ func TestHelloController_HandleHello(t *testing.T) {
 	result := httptest.NewRecorder()
 
 	// test
-	sut.HandleHello(result, sutRequest)
+	sut.HandleRoot(result, sutRequest)
 
 	// verify
 	if result.Code != http.StatusOK {

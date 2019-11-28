@@ -16,7 +16,7 @@ func HelloPath(pieces ...string) string {
 
 type HelloController struct{}
 
-func (c HelloController) HandleHello(w http.ResponseWriter, r *http.Request) {
+func (c HelloController) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", HelloPath())
 	w.WriteHeader(http.StatusOK)
 }

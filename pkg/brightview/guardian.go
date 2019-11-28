@@ -17,8 +17,23 @@ var (
 type Guardian struct {
 	Tower          tower.Tower
 	Ghost          ghost.Ghost
-	Guardian       bungo.Guardian
-	OtherGuardians []bungo.Guardian
+	Guardian       bungo.Character
+	OtherGuardians []bungo.Character
+}
+
+func (v Guardian) TryView(w http.ResponseWriter) {
+	tpl, err := template.ParseFiles(
+		path.Join(v.Tower.TemplatesPath, headerPartPath),
+		path.Join(v.Tower.TemplatesPath, navbarPartPath),
+		path.Join(v.Tower.TemplatesPath, guardianPath),
+		path.Join(v.Tower.TemplatesPath, footerPartPath),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := tpl.ExecuteTemplate(w, "try-guardian", v); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (v Guardian) View(w http.ResponseWriter) {
@@ -31,7 +46,7 @@ func (v Guardian) View(w http.ResponseWriter) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := tpl.ExecuteTemplate(w, "guardian", v); err != nil {
+	if err := tpl.ExecuteTemplate(w, "bnet-guardian", v); err != nil {
 		log.Fatal(err)
 	}
 }

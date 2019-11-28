@@ -64,4 +64,4 @@ USER nobody:nobody
 
 # Run the compiled binary.
 ENTRYPOINT ["/bright"]
-CMD [  "servex", "--config", "/.bright.yaml"]
+CMD [  "serve", "--config", "/.bright.yaml"]

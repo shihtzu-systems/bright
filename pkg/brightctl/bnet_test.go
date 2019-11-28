@@ -20,7 +20,7 @@ func TestBnetController_HandleBnet(t *testing.T) {
 	result := httptest.NewRecorder()
 
 	// test
-	sut.HandleBnet(result, sutRequest)
+	sut.HandleRoot(result, sutRequest)
 
 	// verify
 	expectedBody := "Hello"

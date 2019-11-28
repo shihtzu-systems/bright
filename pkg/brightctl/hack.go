@@ -42,7 +42,7 @@ func (c HackController) Id(w http.ResponseWriter, r *http.Request) string {
 	return store.Values["name"].(string)
 }
 
-func (c HackController) HandleHack(w http.ResponseWriter, r *http.Request) {
+func (c HackController) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", HackPath())
 
 	g := ghost.NewGhost(c.Tower.System.Id, c.Id(w, r))

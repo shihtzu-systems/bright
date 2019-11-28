@@ -20,7 +20,7 @@ func TestTryController_HandleTry(t *testing.T) {
 	result := httptest.NewRecorder()
 
 	// test
-	sut.HandleTry(result, sutRequest)
+	sut.HandleRoot(result, sutRequest)
 
 	// verify
 	resultBody := result.Body.String()
@@ -41,7 +41,7 @@ func TestTryController_HandleTryRecycle(t *testing.T) {
 	result := httptest.NewRecorder()
 
 	// test
-	sut.HandleTryRecycle(result, sutRequest)
+	sut.HandleRecycle(result, sutRequest)
 
 	// verify
 	resultLocation := result.Header().Get("Location")

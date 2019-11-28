@@ -44,35 +44,34 @@ func (c TryController) Id(w http.ResponseWriter, r *http.Request) string {
 	return store.Values["name"].(string)
 }
 
-func (c TryController) HandleTry(w http.ResponseWriter, r *http.Request) {
+func (c TryController) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", TryPath())
 
 	g := ghost.NewGhost(c.Tower.System.Id, c.Id(w, r))
 	g.Materialize(c.Tower.Redis)
 
 	if g.Try.Gamer.Name == "" {
-		barracks := brightsvc.Barracks{Tower: c.Tower}
-		tryUser := barracks.ReportForDuty()
+		cantina := brightsvc.Cantina{Tower: c.Tower}
+		tryUser := cantina.ReportForDuty()
 		g.Try.Embody(tryUser)
 		g.Save(c.Tower.Redis)
 	}
 
-	home := brightview.Home{
-		Tower:   c.Tower,
-		Ghost:   g,
-		TryMode: true,
+	v := brightview.Home{
+		Tower: c.Tower,
+		Ghost: g,
 	}
-	home.View(w)
+	v.TryView(w)
 }
 
-func (c TryController) HandleTryRecycle(w http.ResponseWriter, r *http.Request) {
+func (c TryController) HandleRecycle(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", TryPath())
 
 	g := ghost.NewGhost(c.Tower.System.Id, c.Id(w, r))
 	g.Materialize(c.Tower.Redis)
 
-	barracks := brightsvc.Barracks{Tower: c.Tower}
-	tryUser := barracks.ReportForDuty()
+	cantina := brightsvc.Cantina{Tower: c.Tower}
+	tryUser := cantina.ReportForDuty()
 	g.Try.Embody(tryUser)
 	g.Save(c.Tower.Redis)
 
@@ -80,7 +79,7 @@ func (c TryController) HandleTryRecycle(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(http.StatusTemporaryRedirect)
 }
 
-func (c TryController) HandleTryGuardian(w http.ResponseWriter, r *http.Request) {
+func (c TryController) HandleGuardian(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", TryPath("guardian"))
 	vars := mux.Vars(r)
 
@@ -98,16 +97,16 @@ func (c TryController) HandleTryGuardian(w http.ResponseWriter, r *http.Request)
 	g.Try.Possess(id)
 	g.Save(c.Tower.Redis)
 
-	guardian := brightview.Guardian{
+	v := brightview.Guardian{
 		Tower:          c.Tower,
 		Ghost:          g,
 		Guardian:       g.Try.Summon(),
 		OtherGuardians: g.Try.SummonOthers(),
 	}
-	guardian.View(w)
+	v.TryView(w)
 }
 
-func (c TryController) HandleTrySwapWeapon(w http.ResponseWriter, r *http.Request) {
+func (c TryController) HandleSwapWeapon(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", TryPath("swap", "weapon"))
 	vars := mux.Vars(r)
 
@@ -137,7 +136,7 @@ func (c TryController) HandleTrySwapWeapon(w http.ResponseWriter, r *http.Reques
 	}
 	swapIns := soul.Bag.FindWeapons(swapOut.Slot.Name)
 
-	guardian := brightview.SwapWeapon{
+	v := brightview.SwapWeapon{
 		Tower:          c.Tower,
 		Ghost:          g,
 		Guardian:       g.Try.Summon(),
@@ -145,10 +144,10 @@ func (c TryController) HandleTrySwapWeapon(w http.ResponseWriter, r *http.Reques
 		SwapOut:        swapOut,
 		SwapIns:        swapIns,
 	}
-	guardian.View(w)
+	v.TryView(w)
 }
 
-func (c TryController) HandleTrySwapArmor(w http.ResponseWriter, r *http.Request) {
+func (c TryController) HandleSwapArmor(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", TryPath("swap", "armor"))
 	vars := mux.Vars(r)
 
@@ -178,7 +177,7 @@ func (c TryController) HandleTrySwapArmor(w http.ResponseWriter, r *http.Request
 	}
 	swapIns := soul.Bag.FindArmors(swapOut.Slot.Name)
 
-	guardian := brightview.SwapArmor{
+	v := brightview.SwapArmor{
 		Tower:          c.Tower,
 		Ghost:          g,
 		Guardian:       g.Try.Summon(),
@@ -186,10 +185,10 @@ func (c TryController) HandleTrySwapArmor(w http.ResponseWriter, r *http.Request
 		SwapOut:        swapOut,
 		SwapIns:        swapIns,
 	}
-	guardian.View(w)
+	v.TryView(w)
 }
 
-func (c TryController) HandleTrySwap(w http.ResponseWriter, r *http.Request) {
+func (c TryController) HandleSwap(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", TryPath("swap"))
 	vars := mux.Vars(r)
 

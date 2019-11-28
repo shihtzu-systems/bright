@@ -72,7 +72,7 @@ const (
 	ComponentsCharacterProgressions = 202
 
 	// This will get you just enough information to be able to render the character in 3D
-	// if you have written a 3D rendering library for Destiny Guardians, or "borrowed" ours.
+	// if you have written a 3D rendering library for Destiny Characters, or "borrowed" ours.
 	// It's okay, I won't tell anyone if you're using it.
 	// I'm no snitch. (actually, we don't care if you use it - go to town)
 	CharacterRenderData = 203

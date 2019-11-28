@@ -10,28 +10,28 @@ import (
 	"time"
 )
 
-type Barracks struct {
+type Cantina struct {
 	Tower tower.Tower
 }
 
-func (b Barracks) ReportForDuty() (out bungo.Gamer) {
-	b.Tower.Redis.Connect()
-	defer b.Tower.Redis.Disconnect()
+func (c Cantina) ReportForDuty() (out bungo.User) {
+	c.Tower.Redis.Connect()
+	defer c.Tower.Redis.Disconnect()
 
-	return bungo.Gamer{
-		Name:         NewName(b.Tower.Dad),
+	return bungo.User{
+		Name:         NewName(c.Tower.Dad),
 		MembershipId: "0",
-		Guardians: []bungo.Guardian{
-			b.Deploy("titan"),
-			b.Deploy("hunter"),
-			b.Deploy("warlock"),
+		Characters: []bungo.Character{
+			c.Deploy("titan"),
+			c.Deploy("hunter"),
+			c.Deploy("warlock"),
 		},
 	}
 }
 
-func (b Barracks) Deploy(class string) bungo.Guardian {
-	emblemDef := datax.GetInventoryItem(randomHash(emblemHashes), b.Tower.Redis)
-	guardian := bungo.Guardian{
+func (c Cantina) Deploy(class string) bungo.Character {
+	emblemDef := datax.GetInventoryItem(randomHash(emblemHashes), c.Tower.Redis)
+	guardian := bungo.Character{
 		Id:             strings.ToLower(class),
 		MembershipType: 0,
 		Class:          strings.Title(class),
@@ -51,181 +51,97 @@ func (b Barracks) Deploy(class string) bungo.Guardian {
 			},
 		},
 	}
-	b.Dress(&guardian)
-	b.Provision(&guardian)
+	c.Dress(&guardian)
+	c.Provision(&guardian)
 	return guardian
 }
 
-func (b Barracks) Dress(guardian *bungo.Guardian) {
+func (c Cantina) Dress(guardian *bungo.Character) {
 
-	kineticWeapon := newWeaponInstance(guardian.Id, randomHash(kineticWeaponHashes), b.Tower.Redis)
-	energyWeapon := newWeaponInstance(guardian.Id, randomHash(energyWeaponHashes), b.Tower.Redis)
-	powerWeapon := newWeaponInstance(guardian.Id, randomHash(powerWeaponHashes), b.Tower.Redis)
+	kineticWeaponHash := randomHash(kineticWeaponHashes)
+	kineticWeapon := newWeaponInstance(guardian.Id, fmt.Sprintf("instance-of-%d", kineticWeaponHash), kineticWeaponHash, c.Tower.Redis)
+
+	energyWeaponHash := randomHash(energyWeaponHashes)
+	energyWeapon := newWeaponInstance(guardian.Id, fmt.Sprintf("instance-of-%d", energyWeaponHash), energyWeaponHash, c.Tower.Redis)
+
+	powerWeaponnHash := randomHash(powerWeaponHashes)
+	powerWeapon := newWeaponInstance(guardian.Id, fmt.Sprintf("instance-of-%d", powerWeaponnHash), powerWeaponnHash, c.Tower.Redis)
 
 	switch guardian.Id {
 	case "warlock":
+		helmetHash := randomHash(warlockHelmetHashes)
+		gauntletsHash := randomHash(warlockGauntletHashes)
+		chestHash := randomHash(warlockChestHashes)
+		legHash := randomHash(warlockLegHashes)
+		classHash := randomHash(warlockClassHashes)
 		guardian.Equipped = bungo.Outfit{
 			KineticWeapon: kineticWeapon,
 			EnergyWeapon:  energyWeapon,
 			PowerWeapon:   powerWeapon,
 
-			Helmet:    newArmorInstance(guardian.Id, randomHash(warlockHelmetHashes), b.Tower.Redis),
-			Gauntlets: newArmorInstance(guardian.Id, randomHash(warlockGauntletHashes), b.Tower.Redis),
-			Chest:     newArmorInstance(guardian.Id, randomHash(warlockChestHashes), b.Tower.Redis),
-			Leg:       newArmorInstance(guardian.Id, randomHash(warlockLegHashes), b.Tower.Redis),
-			Class:     newArmorInstance(guardian.Id, randomHash(warlockClassHashes), b.Tower.Redis),
+			Helmet:    newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", helmetHash), helmetHash, c.Tower.Redis),
+			Gauntlets: newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", gauntletsHash), gauntletsHash, c.Tower.Redis),
+			Chest:     newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", chestHash), chestHash, c.Tower.Redis),
+			Leg:       newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", legHash), legHash, c.Tower.Redis),
+			Class:     newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", classHash), classHash, c.Tower.Redis),
 		}
 	case "titan":
+		helmetHash := randomHash(titanHelmetHashes)
+		gauntletsHash := randomHash(titanGauntletHashes)
+		chestHash := randomHash(titanChestHashes)
+		legHash := randomHash(titanLegHashes)
+		classHash := randomHash(titanClassHashes)
 		guardian.Equipped = bungo.Outfit{
 			KineticWeapon: kineticWeapon,
 			EnergyWeapon:  energyWeapon,
 			PowerWeapon:   powerWeapon,
 
-			Helmet:    newArmorInstance(guardian.Id, randomHash(titanHelmetHashes), b.Tower.Redis),
-			Gauntlets: newArmorInstance(guardian.Id, randomHash(titanGauntletHashes), b.Tower.Redis),
-			Chest:     newArmorInstance(guardian.Id, randomHash(titanChestHashes), b.Tower.Redis),
-			Leg:       newArmorInstance(guardian.Id, randomHash(titanLegHashes), b.Tower.Redis),
-			Class:     newArmorInstance(guardian.Id, randomHash(titanClassHashes), b.Tower.Redis),
+			Helmet:    newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", helmetHash), helmetHash, c.Tower.Redis),
+			Gauntlets: newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", gauntletsHash), gauntletsHash, c.Tower.Redis),
+			Chest:     newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", chestHash), chestHash, c.Tower.Redis),
+			Leg:       newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", legHash), legHash, c.Tower.Redis),
+			Class:     newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", classHash), classHash, c.Tower.Redis),
 		}
 	case "hunter":
 		fallthrough
 	default:
+		helmetHash := randomHash(hunterHelmetHashes)
+		gauntletsHash := randomHash(hunterGauntletHashes)
+		chestHash := randomHash(hunterChestHashes)
+		legHash := randomHash(hunterLegHashes)
+		classHash := randomHash(hunterClassHashes)
 		guardian.Equipped = bungo.Outfit{
 			KineticWeapon: kineticWeapon,
 			EnergyWeapon:  energyWeapon,
 			PowerWeapon:   powerWeapon,
 
-			Helmet:    newArmorInstance(guardian.Id, randomHash(hunterHelmetHashes), b.Tower.Redis),
-			Gauntlets: newArmorInstance(guardian.Id, randomHash(hunterGauntletHashes), b.Tower.Redis),
-			Chest:     newArmorInstance(guardian.Id, randomHash(hunterChestHashes), b.Tower.Redis),
-			Leg:       newArmorInstance(guardian.Id, randomHash(hunterLegHashes), b.Tower.Redis),
-			Class:     newArmorInstance(guardian.Id, randomHash(hunterClassHashes), b.Tower.Redis),
+			Helmet:    newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", helmetHash), helmetHash, c.Tower.Redis),
+			Gauntlets: newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", gauntletsHash), gauntletsHash, c.Tower.Redis),
+			Chest:     newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", chestHash), chestHash, c.Tower.Redis),
+			Leg:       newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", legHash), legHash, c.Tower.Redis),
+			Class:     newArmorInstance(guardian.Id, fmt.Sprintf("instance-of-%d", classHash), classHash, c.Tower.Redis),
 		}
 	}
 }
 
-func randomHash(hashes []int) int {
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(hashes), func(i, j int) {
-		hashes[i], hashes[j] = hashes[j], hashes[i]
-	})
-	return hashes[0]
-}
-
-func (b Barracks) Provision(guardian *bungo.Guardian) {
+func (c Cantina) Provision(guardian *bungo.Character) {
 	switch guardian.Id {
 	case "warlock":
 		guardian.Bag = bungo.Bag{
-			Weapons: bestCrucibleWeapons(guardian.Id, b.Tower.Redis),
-			Armors:  hunterArmors(guardian.Id, b.Tower.Redis),
+			Weapons: bestCrucibleWeapons(guardian.Id, c.Tower.Redis),
+			Armors:  hunterArmors(guardian.Id, c.Tower.Redis),
 		}
 	case "titan":
 		guardian.Bag = bungo.Bag{
-			Weapons: bestCrucibleWeapons(guardian.Id, b.Tower.Redis),
-			Armors:  hunterArmors(guardian.Id, b.Tower.Redis),
+			Weapons: bestCrucibleWeapons(guardian.Id, c.Tower.Redis),
+			Armors:  hunterArmors(guardian.Id, c.Tower.Redis),
 		}
 	case "hunter":
 		fallthrough
 	default:
 		guardian.Bag = bungo.Bag{
-			Weapons: bestCrucibleWeapons(guardian.Id, b.Tower.Redis),
-			Armors:  hunterArmors(guardian.Id, b.Tower.Redis),
+			Weapons: bestCrucibleWeapons(guardian.Id, c.Tower.Redis),
+			Armors:  hunterArmors(guardian.Id, c.Tower.Redis),
 		}
 	}
-}
-
-func newWeaponInstance(characterId string, weaponHash int, redis tower.Redis) bungo.Weapon {
-	var weaponBucket string
-	var weaponSlot string
-	var weaponType string
-	itemDef := datax.GetInventoryItem(weaponHash, redis)
-	for _, itemCategoryHash := range itemDef.ItemCategoryHashes {
-		itemCategoryDef := datax.GetItemCategory(itemCategoryHash, redis)
-		if itemCategoryHash == kineticCategory ||
-			itemCategoryHash == energyCategory ||
-			itemCategoryHash == powerCategory {
-			weaponBucket = itemCategoryDef.ShortTitle
-			weaponSlot = itemCategoryDef.ShortTitle
-		}
-		if itemCategoryHash == autoRifleCategory ||
-			itemCategoryHash == handCannonCategory ||
-			itemCategoryHash == pulseRifleCategory ||
-			itemCategoryHash == scoutRifleCategory ||
-			itemCategoryHash == fusionRifleCategory ||
-			itemCategoryHash == sniperRifleCategory ||
-			itemCategoryHash == shotgunCategory ||
-			itemCategoryHash == machineGunCategory ||
-			itemCategoryHash == rocketLauncherCategory ||
-			itemCategoryHash == sidearmCategory ||
-			itemCategoryHash == swordCategory ||
-			itemCategoryHash == grenadeLauncherCategory ||
-			itemCategoryHash == tracerRifleCategory ||
-			itemCategoryHash == bowCategory {
-			weaponType = itemCategoryDef.ShortTitle
-		}
-	}
-	return bungo.Weapon{
-		MembershipType:  0,
-		CharacterId:     characterId,
-		InstanceId:      fmt.Sprintf("instance-of-%d", weaponHash),
-		InventoryItemId: weaponHash,
-
-		Tier:        itemDef.Inventory.TierTypeName,
-		Bucket:      weaponBucket,
-		Name:        itemDef.DisplayProperties.Name,
-		Type:        weaponType,
-		IconEnabled: itemDef.DisplayProperties.HasIcon,
-		IconUri:     itemDef.DisplayProperties.Icon,
-		Slot: bungo.Slot{
-			Name: weaponSlot,
-		},
-	}
-}
-
-func newArmorInstance(characterId string, armorHash int, redis tower.Redis) bungo.Armor {
-	var armorClass string
-	itemDef := datax.GetInventoryItem(armorHash, redis)
-	itemBucketDef := datax.GetInventoryBucket(itemDef.Inventory.BucketTypeHash, redis)
-	for _, itemCategoryHash := range itemDef.ItemCategoryHashes {
-		itemCategoryDef := datax.GetItemCategory(itemCategoryHash, redis)
-		if itemCategoryHash == warlockCategory ||
-			itemCategoryHash == titanCategory ||
-			itemCategoryHash == hunterCategory {
-			armorClass = itemCategoryDef.ShortTitle
-		}
-	}
-	armorBucket := itemBucketDef.DisplayProperties.Name
-	armorSlot := itemBucketDef.DisplayProperties.Name
-	return bungo.Armor{
-		MembershipType:  0,
-		CharacterId:     characterId,
-		InstanceId:      fmt.Sprintf("instance-of-%d", armorHash),
-		InventoryItemId: armorHash,
-
-		Tier:        itemDef.Inventory.TierTypeName,
-		Bucket:      armorBucket,
-		Name:        itemDef.DisplayProperties.Name,
-		Type:        armorClass,
-		IconEnabled: itemDef.DisplayProperties.HasIcon,
-		IconUri:     itemDef.DisplayProperties.Icon,
-		Slot: bungo.Slot{
-			Name: armorSlot,
-		},
-	}
-}
-
-func bestCrucibleWeapons(characterId string, redis tower.Redis) (out []bungo.Weapon) {
-	for _, hash := range bestCrucibleWeaponHashes {
-		instance := newWeaponInstance(characterId, hash, redis)
-		out = append(out, instance)
-	}
-	return out
-}
-
-func hunterArmors(characterId string, redis tower.Redis) (out []bungo.Armor) {
-	for _, hash := range hunterArmorHashes {
-		instance := newArmorInstance(characterId, hash, redis)
-		out = append(out, instance)
-	}
-	return out
 }

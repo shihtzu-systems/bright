@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/shihtzu-systems/bright/pkg/bright"
+	"github.com/shihtzu-systems/bright/pkg/brightsvc"
 	"github.com/shihtzu-systems/bright/pkg/brightx"
 	"github.com/shihtzu-systems/bright/pkg/tower"
 	"github.com/spf13/cobra"
@@ -18,10 +18,11 @@ var destinyCommand = &cobra.Command{
 			WorkingBasePath: viper.GetString("destinyContent.v5.workingBasePath"),
 			BungieNetHost:   viper.GetString("bungie.v2.host"),
 
-			BungieClient: bright.NewBungieClient(bright.NewBungieClientArgs{
-				Host:   viper.GetString("bungie.v2.host"),
-				Base:   viper.GetString("bungie.v2.base"),
-				ApiKey: viper.GetString("bungie.v2.apiKey"),
+			BungieClient: brightsvc.NewBungieClient(brightsvc.NewBungieClientArgs{
+				BungieNetUrl: viper.GetString("bungie.v2.url"),
+				Host:         viper.GetString("bungie.v2.host"),
+				Base:         viper.GetString("bungie.v2.base"),
+				ApiKey:       viper.GetString("bungie.v2.apiKey"),
 
 				AppVersion: viper.GetString("app.v5.version"),
 				AppId:      viper.GetString("app.v5.id"),

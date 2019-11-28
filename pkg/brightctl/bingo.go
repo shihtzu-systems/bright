@@ -23,12 +23,12 @@ type BingoController struct {
 	Tower        tower.Tower
 }
 
-func (c BingoController) HandleBingo(w http.ResponseWriter, r *http.Request) {
+func (c BingoController) HandleRoot(w http.ResponseWriter, r *http.Request) {
 	log.Debug("handling ", BingoPath())
 	board := brightsvc.NewBingo("christmas")
-	bingo := brightview.Bingo{
+	v := brightview.Bingo{
 		Board: board,
 		Tower: c.Tower,
 	}
-	bingo.View(w)
+	v.View(w)
 }

@@ -5,13 +5,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type Gamer struct {
+type User struct {
 	Name         string
 	MembershipId string
-	Guardians    []Guardian
+	Characters   []Character
 }
 
-type Guardian struct {
+type Character struct {
 	Id             string `yaml:"id" json:"id"`
 	MembershipType int    `yaml:"membershipType" json:"membership_type"`
 
@@ -25,12 +25,12 @@ type Guardian struct {
 	Equipped Outfit `yaml:"equipped" json:"equipped"`
 }
 
-func (g Guardian) String() string {
+func (g Character) String() string {
 	return fmt.Sprintf("id=%s\nemblem=%s\nclass=%s\nkinetic=%s\nenergy=%s\npower=%s\nclass-item=%s\narmors=%d\nweapons=%d",
 		g.Id, g.Emblem.Name, g.Class, g.Equipped.KineticWeapon.Name, g.Equipped.EnergyWeapon.Name, g.Equipped.PowerWeapon.Name, g.Equipped.Class.Name, len(g.Bag.Armors), len(g.Bag.Weapons))
 }
 
-func (g Guardian) Differences(other Guardian) (out []string) {
+func (g Character) Differences(other Character) (out []string) {
 	if g.Equipped.KineticWeapon.InstanceId != other.Equipped.KineticWeapon.InstanceId {
 		out = append(out, g.Equipped.KineticWeapon.InstanceId)
 	}
@@ -59,12 +59,11 @@ func (g Guardian) Differences(other Guardian) (out []string) {
 	return out
 }
 
-func (g *Guardian) SwapWeapon(swapOut Weapon, swapIn Weapon) {
+func (g *Character) SwapWeapon(swapOut Weapon, swapIn Weapon) {
 	switch swapOut.Slot.Name {
 	case g.Equipped.KineticWeapon.Slot.Name:
 		g.Bag.StowWeapon(swapOut)
 		g.Bag.TakeWeapon(swapIn)
-		log.Debug("KINETECIDJfoidsjaoiajsdoifja ", len(g.Bag.Weapons))
 		g.Equipped.KineticWeapon = swapIn
 	case g.Equipped.EnergyWeapon.Slot.Name:
 		g.Bag.StowWeapon(swapOut)
@@ -77,7 +76,7 @@ func (g *Guardian) SwapWeapon(swapOut Weapon, swapIn Weapon) {
 	}
 }
 
-func (g *Guardian) SwapArmor(swapOut Armor, swapIn Armor) {
+func (g *Character) SwapArmor(swapOut Armor, swapIn Armor) {
 	switch swapOut.Slot.Name {
 	case g.Equipped.Helmet.Slot.Name:
 		g.Bag.StowArmor(swapOut)

@@ -17,7 +17,7 @@ func TestBingoController_HandleBingo(t *testing.T) {
 	result := httptest.NewRecorder()
 
 	// test
-	sut.HandleBingo(result, sutRequest)
+	sut.HandleRoot(result, sutRequest)
 
 	// verify
 	if result.Code != http.StatusOK {

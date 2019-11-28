@@ -1,53 +1,51 @@
-package bright
+package brightsvc
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"github.com/shihtzu-systems/bright/generated/bungie/data"
+	"github.com/shihtzu-systems/bright/generated/bungie/datax"
+
 	"github.com/shihtzu-systems/bright/pkg/bungo"
+	"github.com/shihtzu-systems/bright/pkg/ghost"
+	"github.com/shihtzu-systems/bright/pkg/tower"
 	log "github.com/sirupsen/logrus"
 	"strings"
 )
 
-type CurrentUserArgs struct {
-	OathClientId     string
-	OathClientSecret string
-	Auth             BungieToken
-	BungieClient     *resty.Client
-	Destiny          data.Content
+type Barracks struct {
+	Tower        tower.Tower
+	Ghost        ghost.Ghost
+	BungieClient *resty.Client
 }
 
-func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
-	freshToken, err := refresh(args.BungieClient, args.OathClientId, args.OathClientSecret, args.Auth)
-	if err != nil {
-		return bungo.Gamer{}, err
-	}
-	log.Debug(freshToken.MembershipId)
+func (b Barracks) ReportForDuty() (out bungo.User) {
+	b.Tower.Redis.Connect()
+	defer b.Tower.Redis.Disconnect()
 
-	getMembershipDataForCurrentUserResponse, err := args.BungieClient.R().
+	freshToken := Refresh(b.BungieClient, b.Ghost, b.Tower)
+	getMembershipDataForCurrentUserResponse, err := b.BungieClient.R().
 		EnableTrace().
 		SetAuthToken(freshToken.AccessToken).
-		Get(bungieApiUri + "/Gamer/GetMembershipsForCurrentUser/")
+		Get("/Platform/User/GetMembershipsForCurrentUser/")
 	if err != nil {
-		return bungo.Gamer{}, err
+		log.Fatal(err)
 	}
 
 	var getMembershipDataForCurrentUser bungo.GetMembershipDataForCurrentUser
 	if err := json.Unmarshal(getMembershipDataForCurrentUserResponse.Body(), &getMembershipDataForCurrentUser); err != nil {
-		return bungo.Gamer{}, err
+		log.Warn(string(getMembershipDataForCurrentUserResponse.Body()))
+		log.Fatal(err)
 	}
 
 	bungieNetUser := getMembershipDataForCurrentUser.Response.BungieNetUser
 	destinyMemberships := getMembershipDataForCurrentUser.Response.DestinyMemberships
 
-	destiny := args.Destiny
-	log.Debug("/Gamer/GetMembershipsForCurrentUser -> ", bungieNetUser.DisplayName)
-	var characters []bungo.Guardian
+	log.Debug("/Platform/User/GetMembershipsForCurrentUser -> ", bungieNetUser.DisplayName)
+	var characters []bungo.Character
 	for _, destinyMembership := range destinyMemberships {
 
-		getProfileResp, err := args.BungieClient.R().
+		getProfileResp, err := b.BungieClient.R().
 			EnableTrace().
 			SetAuthToken(freshToken.AccessToken).
 			SetQueryParams(map[string]string{
@@ -59,22 +57,22 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 				"membershipType":      fmt.Sprint(destinyMembership.MembershipType),
 				"destinyMembershipId": destinyMembership.MembershipID,
 			}).
-			Get(bungieApiUri + "/Destiny2/{membershipType}/Profile/{destinyMembershipId}/")
+			Get("/Platform/Destiny2/{membershipType}/Profile/{destinyMembershipId}/")
 		if err != nil {
-			return bungo.Gamer{}, err
+			log.Fatal(err)
 		}
 
-		getProfileRespRaw := getProfileResp.Body()
-
 		var getProfile bungo.GetProfile
-		if err := json.Unmarshal(getProfileRespRaw, &getProfile); err != nil {
-			return bungo.Gamer{}, err
+		if err := json.Unmarshal(getProfileResp.Body(), &getProfile); err != nil {
+			log.Warn(string(getProfileResp.Body()))
+			log.Fatal(err)
 		}
 
 		profileData := getProfile.Response.Profile.Data
 
 		for _, characterId := range profileData.CharacterIds {
-			getCharacterResp, err := args.BungieClient.R().
+
+			getCharacterResp, err := b.BungieClient.R().
 				EnableTrace().
 				SetAuthToken(freshToken.AccessToken).
 				SetQueryParams(map[string]string{
@@ -89,54 +87,54 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 					"destinyMembershipId": destinyMembership.MembershipID,
 					"characterId":         characterId,
 				}).
-				Get(bungieApiUri + "/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Guardian/{characterId}/")
+				Get("/Platform/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/")
 			if err != nil {
-				return bungo.Gamer{}, err
+				log.Fatal(err)
 			}
 
-			getCharacterRespRaw := getCharacterResp.Body()
+			log.Warn(string(getCharacterResp.Body()))
 
 			var getCharacter bungo.GetCharacter
-			if err := json.Unmarshal(getCharacterRespRaw, &getCharacter); err != nil {
-				return bungo.Gamer{}, err
+			if err := json.Unmarshal(getCharacterResp.Body(), &getCharacter); err != nil {
+				log.Warn(string(getCharacterResp.Body()))
+				log.Fatal(err)
 			}
 
 			characterData := getCharacter.Response.Character.Data
 			equipmentItemsData := getCharacter.Response.Equipment.Data
 			inventoryItemsData := getCharacter.Response.Inventory.Data
 
-			log.Debug("/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Guardian/{characterId}/ -> ", characterData.CharacterID)
 			var equipped bungo.Outfit
 			for _, item := range equipmentItemsData.Items {
 
-				itemDef := destiny.InventoryItem.Find(int(item.ItemHash))
-				bucketDef := destiny.InventoryBucket.Find(itemDef.Inventory.BucketTypeHash)
+				itemDef := datax.GetInventoryItem(int(item.ItemHash), b.Tower.Redis)
+				bucketDef := datax.GetInventoryBucket(itemDef.Inventory.BucketTypeHash, b.Tower.Redis)
 
 				switch bucketDef.DisplayProperties.Name {
 				case "Kinetic Weapons":
 					log.Debug("Kinetic: ", itemDef.DisplayProperties.Name)
-					equipped.KineticWeapon = NewWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.KineticWeapon = newWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Energy Weapons":
 					log.Debug("Energy: ", itemDef.DisplayProperties.Name)
-					equipped.EnergyWeapon = NewWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.EnergyWeapon = newWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Power Weapons":
 					log.Debug("Power: ", itemDef.DisplayProperties.Name)
-					equipped.PowerWeapon = NewWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.PowerWeapon = newWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Helmet":
 					log.Debug("Helmet: ", itemDef.DisplayProperties.Name)
-					equipped.Helmet = NewArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.Helmet = newArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Gauntlets":
 					log.Debug("Gauntlets: ", itemDef.DisplayProperties.Name)
-					equipped.Gauntlets = NewArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.Gauntlets = newArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Chest Armor":
 					log.Debug("Chest: ", itemDef.DisplayProperties.Name)
-					equipped.Chest = NewArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.Chest = newArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Leg Armor":
 					log.Debug("Legs: ", itemDef.DisplayProperties.Name)
-					equipped.Leg = NewArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.Leg = newArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				case "Class Armor":
 					log.Debug("Class: ", itemDef.DisplayProperties.Name)
-					equipped.Class = NewArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny)
+					equipped.Class = newArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis)
 				default:
 					log.Trace("Ignoring: ", bucketDef.DisplayProperties.Name)
 				}
@@ -145,8 +143,8 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 			var bag bungo.Bag
 			for _, item := range inventoryItemsData.Items {
 
-				itemDef := destiny.InventoryItem.Find(int(item.ItemHash))
-				bucketDef := destiny.InventoryBucket.Find(itemDef.Inventory.BucketTypeHash)
+				itemDef := datax.GetInventoryItem(int(item.ItemHash), b.Tower.Redis)
+				bucketDef := datax.GetInventoryBucket(itemDef.Inventory.BucketTypeHash, b.Tower.Redis)
 
 				switch bucketDef.DisplayProperties.Name {
 				case "Kinetic Weapons":
@@ -155,7 +153,7 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 					fallthrough
 				case "Power Weapons":
 					log.Trace("Bag Weapon: ", itemDef.DisplayProperties.Name)
-					bag.Weapons = append(bag.Weapons, NewWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny))
+					bag.Weapons = append(bag.Weapons, newWeaponInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis))
 				case "Helmet":
 					fallthrough
 				case "Gauntlets":
@@ -166,7 +164,7 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 					fallthrough
 				case "Class Armor":
 					log.Trace("Bag Armor: ", itemDef.DisplayProperties.Name)
-					bag.Armors = append(bag.Armors, NewArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, destiny))
+					bag.Armors = append(bag.Armors, newArmorInstance(characterId, item.ItemInstanceID, itemDef.Hash, b.Tower.Redis))
 				default:
 					log.Trace("Ignoring: ", bucketDef.DisplayProperties.Name)
 				}
@@ -174,13 +172,13 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 
 			var class string
 			if characterData.ClassHash > 0 {
-				classDef := destiny.Class.Find(characterData.ClassHash)
+				classDef := datax.GetClass(characterData.ClassHash, b.Tower.Redis)
 				class = classDef.DisplayProperties.Name
 			}
 
 			var emblem bungo.Emblem
 			if characterData.EmblemHash > 0 {
-				itemDef := destiny.InventoryItem.Find(characterData.EmblemHash)
+				itemDef := datax.GetInventoryItem(characterData.EmblemHash, b.Tower.Redis)
 
 				emblem.Name = itemDef.DisplayProperties.Name
 				emblem.InventoryItemId = itemDef.Hash
@@ -195,7 +193,7 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 				}
 			}
 
-			characters = append(characters, bungo.Guardian{
+			characters = append(characters, bungo.Character{
 				Id:             characterData.CharacterID,
 				MembershipType: characterData.MembershipType,
 
@@ -209,40 +207,10 @@ func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 		}
 	}
 
-	return bungo.Gamer{
+	return bungo.User{
 		Name:         bungieNetUser.DisplayName,
 		MembershipId: bungieNetUser.MembershipID,
-		Guardians:    characters,
-	}, nil
-}
-
-type CurrentCharacterArgs struct {
-	MembershipType int
-	Id             string
-
-	OathClientId     string
-	OathClientSecret string
-	Auth             BungieToken
-	BungieClient     *resty.Client
-	Destiny          data.Content
-}
-
-func CurrentCharacter(args CurrentCharacterArgs) (out bungo.Guardian, err error) {
-	currentUser, err := CurrentUser(CurrentUserArgs{
-		OathClientId:     args.OathClientId,
-		OathClientSecret: args.OathClientSecret,
-		Auth:             args.Auth,
-		BungieClient:     args.BungieClient,
-		Destiny:          args.Destiny,
-	})
-	if err != nil {
-		return bungo.Guardian{}, err
+		Characters:   characters,
 	}
 
-	for _, character := range currentUser.Guardians {
-		if character.Id == args.Id && character.MembershipType == args.MembershipType {
-			return character, nil
-		}
-	}
-	return bungo.Guardian{}, errors.New("not found")
 }

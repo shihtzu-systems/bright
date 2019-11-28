@@ -1,11 +1,11 @@
-{{ define "guardian" }}
+{{ define "try-guardian" }}
   <html lang="en-US">
 
   {{ template "header" .Tower }}
 
   <body class="has-navbar-fixed-top has-navbar-fixed-bottom">
 
-  {{ template "guardian-navbar" . }}
+  {{ template "try-guardian-navbar" . }}
 
   {{ with .Guardian }}
   <section class="section"
@@ -290,6 +290,308 @@
 
     </div>
   </section>
+  {{ end }}
+
+  {{ template "footer" .Tower }}
+
+  {{ template "google-analytics" .Tower.GoogleAnalyticsId }}
+
+  </body>
+  </html>
+{{ end }}
+
+{{ define "bnet-guardian" }}
+  <html lang="en-US">
+
+  {{ template "header" .Tower }}
+
+  <body class="has-navbar-fixed-top has-navbar-fixed-bottom">
+
+  {{ template "bnet-guardian-navbar" . }}
+
+  {{ with .Guardian }}
+    <section class="section"
+             style="background-color: rgba({{ .Emblem.Background.Red }}, {{ .Emblem.Background.Green }}, {{ .Emblem.Background.Blue }}, .5);">
+
+      <div class="container notification" style="max-width: 728px; background-color: rgba(25, 25, 25, .5);">
+        <h1 class="title has-text-light is-unselectable"
+            style="text-align: center; text-shadow: 2px 2px 0 rgba({{ .Emblem.Background.Red }}, {{ .Emblem.Background.Green }}, {{ .Emblem.Background.Blue }}, .75);">
+          Weapons</h1>
+        <hr>
+
+        <!-- kinetic weapon -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/weapon/{{ .Equipped.KineticWeapon.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.KineticWeapon.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.KineticWeapon.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.KineticWeapon.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+        <!-- energy weapon -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/weapon/{{ .Equipped.EnergyWeapon.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.EnergyWeapon.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.EnergyWeapon.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.EnergyWeapon.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+        <!-- power weapon -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/weapon/{{ .Equipped.PowerWeapon.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.PowerWeapon.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.PowerWeapon.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.PowerWeapon.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="container notification" style="max-width: 728px; background-color: rgba(25, 25, 25, .5);">
+        <h1 class="title has-text-light is-unselectable"
+            style="text-align: center; text-shadow: 2px 2px 0 rgba({{ .Emblem.Background.Red }}, {{ .Emblem.Background.Green }}, {{ .Emblem.Background.Blue }}, .75);">
+          Armor</h1>
+        <hr>
+
+        <!-- helmet armor -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/armor/{{ .Equipped.Helmet.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.Helmet.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.Helmet.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.Helmet.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+        <!-- gauntlet armor -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/armor/{{ .Equipped.Gauntlets.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.Gauntlets.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.Gauntlets.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.Gauntlets.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+        <!-- chest armor -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/armor/{{ .Equipped.Chest.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.Chest.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.Chest.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.Chest.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+        <!-- leg armor -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/armor/{{ .Equipped.Leg.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.Leg.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.Leg.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.Leg.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+        <!-- class armor -->
+        <article class="media center">
+          <div class="media-content bright-item">
+            <div id="grid">
+
+              <div id="a" class="center">
+
+                <a class="button is-primary is-outlined bright-character-icon"
+                   href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/swap/armor/{{ .Equipped.Class.InstanceId }}">
+                  <figure class="image is-48x48 is-unselectable">
+                    <img  src="{{ $.Tower.BungieNetUrl }}/{{ .Equipped.Class.IconUri }}">
+                  </figure>
+                </a>
+
+              </div>
+
+              <div id="b">
+                <h1 class="title is-size-4 is-size-5-mobile has-text-white">{{ .Equipped.Class.Name }}</h1>
+                <h2 class="subtitle is-size-5  is-size-6-mobile has-text-warning">{{ .Equipped.Class.Slot.Name }}</h2>
+              </div>
+
+              <div id="c" class="center">
+
+              </div>
+
+              <div id="d" class="center">
+
+              </div>
+
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
   {{ end }}
 
   {{ template "footer" .Tower }}

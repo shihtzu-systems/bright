@@ -107,7 +107,7 @@ You may only request this component for the logged in user's Profile, and will n
 		description := `
 This will get you summary info about each of the characters in the profile.
 `
-		return "Guardians", description, nil
+		return "Characters", description, nil
 	case ComponentsCharacterInventoriesKey:
 		description := `
 This will get you information about any non-equipped items on the character or character(s) in question,
@@ -125,7 +125,7 @@ You have to either be authenticated as that user, or that user must allow anonym
 		return "CharacterProgressions", description, nil
 	case CharacterRenderDataKey:
 		description := `
-This will get you just enough information to be able to render the character in 3D if you have written a 3D rendering library for Destiny Guardians, or "borrowed" ours.
+This will get you just enough information to be able to render the character in 3D if you have written a 3D rendering library for Destiny Characters, or "borrowed" ours.
 It's okay, I won't tell anyone if you're using it.
 I'm no snitch. (actually, we don't care if you use it - go to town)
 `

@@ -21,7 +21,7 @@ func TestHackController_HandleHack(t *testing.T) {
 	result := httptest.NewRecorder()
 
 	// test
-	sut.HandleHack(result, sutRequest)
+	sut.HandleRoot(result, sutRequest)
 
 	// verify
 	expectedLocation := path.Join(bnetBasePath)

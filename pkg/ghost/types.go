@@ -16,11 +16,11 @@ type Ghost struct {
 }
 
 type Soul struct {
-	Gamer     bungo.Gamer    `yaml:"gamer" json:"gamer"`
-	Possessed string         `yaml:"possessed" json:"possessed"`
-	One       bungo.Guardian `yaml:"one" json:"one"`
-	Two       bungo.Guardian `yaml:"two" json:"two"`
-	Three     bungo.Guardian `yaml:"three" json:"three"`
+	Gamer     bungo.User      `yaml:"gamer" json:"gamer"`
+	Possessed string          `yaml:"possessed" json:"possessed"`
+	One       bungo.Character `yaml:"one" json:"one"`
+	Two       bungo.Character `yaml:"two" json:"two"`
+	Three     bungo.Character `yaml:"three" json:"three"`
 }
 
 type BungieToken struct {

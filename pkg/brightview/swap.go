@@ -17,10 +17,25 @@ var (
 type SwapWeapon struct {
 	Tower          tower.Tower
 	Ghost          ghost.Ghost
-	Guardian       bungo.Guardian
-	OtherGuardians []bungo.Guardian
+	Guardian       bungo.Character
+	OtherGuardians []bungo.Character
 	SwapOut        bungo.Weapon
 	SwapIns        []bungo.Weapon
+}
+
+func (v SwapWeapon) TryView(w http.ResponseWriter) {
+	tpl, err := template.ParseFiles(
+		path.Join(v.Tower.TemplatesPath, headerPartPath),
+		path.Join(v.Tower.TemplatesPath, navbarPartPath),
+		path.Join(v.Tower.TemplatesPath, swapPath),
+		path.Join(v.Tower.TemplatesPath, footerPartPath),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := tpl.ExecuteTemplate(w, "try-swap", v); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (v SwapWeapon) View(w http.ResponseWriter) {
@@ -33,7 +48,7 @@ func (v SwapWeapon) View(w http.ResponseWriter) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := tpl.ExecuteTemplate(w, "swap", v); err != nil {
+	if err := tpl.ExecuteTemplate(w, "bnet-swap", v); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -41,10 +56,25 @@ func (v SwapWeapon) View(w http.ResponseWriter) {
 type SwapArmor struct {
 	Tower          tower.Tower
 	Ghost          ghost.Ghost
-	Guardian       bungo.Guardian
-	OtherGuardians []bungo.Guardian
+	Guardian       bungo.Character
+	OtherGuardians []bungo.Character
 	SwapOut        bungo.Armor
 	SwapIns        []bungo.Armor
+}
+
+func (v SwapArmor) TryView(w http.ResponseWriter) {
+	tpl, err := template.ParseFiles(
+		path.Join(v.Tower.TemplatesPath, headerPartPath),
+		path.Join(v.Tower.TemplatesPath, navbarPartPath),
+		path.Join(v.Tower.TemplatesPath, swapPath),
+		path.Join(v.Tower.TemplatesPath, footerPartPath),
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := tpl.ExecuteTemplate(w, "try-swap", v); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (v SwapArmor) View(w http.ResponseWriter) {
@@ -57,7 +87,7 @@ func (v SwapArmor) View(w http.ResponseWriter) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := tpl.ExecuteTemplate(w, "swap", v); err != nil {
+	if err := tpl.ExecuteTemplate(w, "bnet-swap", v); err != nil {
 		log.Fatal(err)
 	}
 }

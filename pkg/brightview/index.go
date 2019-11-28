@@ -8,11 +8,6 @@ import (
 	"path"
 )
 
-const (
-	bungieUrl    = "https://www.bungie.net"
-	bungieApiUri = "/Platform"
-)
-
 var (
 	// parts
 	headerPartPath = "parts/header.html"

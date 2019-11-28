@@ -35,6 +35,13 @@ var christmasMovie = bingo.Boxes{
 	"Magical Item",
 	"Highschool Sweethearts with Bad Breakup",
 	"Sick/Dying Relative",
+	"Parent/Child heart to heart",
+	"Sidekick is gay",
+	"Sidekick is non-white",
+	"Childhood memory",
+	"Interrupted kiss",
+	"Lighting of the town tree",
+	"No wifi",
 }
 
 func NewBingo(theme string) bingo.Board {

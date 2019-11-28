@@ -1,4 +1,4 @@
-{{ define "home" }}
+{{ define "try-home" }}
   <html lang="en-US">
 
   {{ template "header" .Tower }}
@@ -16,14 +16,12 @@
         </h1>
 
         <h2 class="subtitle is-size-2 is-size-4-mobile is-unselectable has-text-light has-text-weight-bold center" style="text-shadow: 2px 2px 0 rgba(175,175,175, .75);">
-            {{ if .Tower.Try }}
             {{ .Ghost.Try.Gamer.Name }}
-              <a class="button is-dark is-outlined" style="margin-left: 1rem" href="/try/recycle">
-              <span class="icon is-medium">
-                <i class="fas fa-recycle"></i>
-              </span>
-              </a>
-            {{ end }}
+            <a class="button is-dark is-outlined" style="margin-left: 1rem" href="/try/recycle">
+            <span class="icon is-medium">
+              <i class="fas fa-recycle"></i>
+            </span>
+            </a>
         </h2>
       </div>
 
@@ -127,6 +125,124 @@
   </html>
 {{ end }}
 
-{{ define "home-character" }}
+{{ define "bnet-home" }}
+  <html lang="en-US">
 
+  {{ template "header" .Tower }}
+
+  <body class="has-background-black has-navbar-fixed-top has-navbar-fixed-bottom">
+
+  {{ template "navbar" .Tower }}
+
+  <section class="section">
+
+    <div class="hero bright-character center">
+      <div class="hero-head">
+        <h1 class="title is-size-4 is-size-6-mobile is-unselectable has-text-warning has-text-weight-light center">
+          Welcome
+        </h1>
+
+        <h2 class="subtitle is-size-2 is-size-4-mobile is-unselectable has-text-light has-text-weight-bold center" style="text-shadow: 2px 2px 0 rgba(175,175,175, .75);">
+                {{ .Ghost.Bright.Gamer.Name }}
+        </h2>
+      </div>
+
+      <div class="hero-body">
+
+          {{ with .Ghost.Bright.One }}
+            <div class="card bright-character" style="margin-top: 18px; background: black url({{ $.Tower.BungieNetUrl }}/{{ .Emblem.BannerUri }}) center / cover">
+              <div class="card-image">
+
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}" alt="Placeholder image">
+                    </figure>
+                  </div>
+                  <div class="media-content" >
+                    <p class="title is-size-3 is-size-4-mobile has-text-light" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">{{ .Class }}</p>
+                    <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
+                  </div>
+                  <div class="media-right">
+                    <a href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <span class="icon">
+                      <i class="fas fa-street-view"></i>
+                    </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{ end }}
+
+          {{ with .Ghost.Bright.Two }}
+            <div class="card bright-character" style="margin-top: 18px; background: black url({{ $.Tower.BungieNetUrl }}/{{ .Emblem.BannerUri }}) center / cover">
+              <div class="card-image">
+
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}" alt="Placeholder image">
+                    </figure>
+                  </div>
+                  <div class="media-content" >
+                    <p class="title is-size-3 is-size-4-mobile has-text-light" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">{{ .Class }}</p>
+                    <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
+                  </div>
+                  <div class="media-right">
+                    <a href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <span class="icon">
+                      <i class="fas fa-street-view"></i>
+                    </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{ end }}
+
+          {{ with .Ghost.Bright.Three }}
+            <div class="card bright-character" style="margin-top: 18px; background: black url({{ $.Tower.BungieNetUrl }}/{{ .Emblem.BannerUri }}) center / cover">
+              <div class="card-image">
+
+              </div>
+              <div class="card-content">
+                <div class="media">
+                  <div class="media-left">
+                    <figure class="image is-64x64">
+                      <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}" alt="Placeholder image">
+                    </figure>
+                  </div>
+                  <div class="media-content" >
+                    <p class="title is-size-3 is-size-4-mobile has-text-light" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">{{ .Class }}</p>
+                    <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
+                  </div>
+                  <div class="media-right">
+                    <a href="/bnet/guardian/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <span class="icon">
+                      <i class="fas fa-street-view"></i>
+                    </span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {{ end }}
+
+      </div>
+    </div>
+    <br>
+
+  </section>
+
+  {{ template "footer" .Tower }}
+
+  {{ template "google-analytics" .Tower.GoogleAnalyticsId }}
+
+  </body>
+  </html>
 {{ end }}
