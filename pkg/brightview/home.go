@@ -29,15 +29,7 @@ func (v Home) View(w http.ResponseWriter) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := tpl.ExecuteTemplate(w, "home", struct {
-		Try   bool
-		Ghost ghost.Ghost
-		Tower tower.Tower
-	}{
-		v.TryMode,
-		v.Ghost,
-		v.Tower,
-	}); err != nil {
+	if err := tpl.ExecuteTemplate(w, "home", v); err != nil {
 		log.Fatal(err)
 	}
 }

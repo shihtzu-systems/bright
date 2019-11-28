@@ -93,7 +93,7 @@ func TestGhost_Materialize_Found(t *testing.T) {
 func newTestGhost(t *testing.T) Ghost {
 	testUser := newTestUser(t)
 	testGhost := Ghost{
-		User:      testUser,
+		Gamer:     testUser,
 		CurrentId: "1",
 		Bright:    newTestBright(t, testUser),
 		Shadow:    newTestShadow(t, testUser),
@@ -103,7 +103,7 @@ func newTestGhost(t *testing.T) Ghost {
 	return testGhost
 }
 
-func newTestUser(t *testing.T) (out User) {
+func newTestUser(t *testing.T) (out Gamer) {
 	testUser, err := bright.TryUser(bright.TryUserArgs{
 		Dad: false,
 	})
@@ -111,30 +111,30 @@ func newTestUser(t *testing.T) (out User) {
 		sorry.UnexpectedError(t, err)
 		t.Fail()
 	}
-	return User(testUser)
+	return Gamer(testUser)
 }
 
-func newTestBright(t *testing.T, user User) (out Bright) {
+func newTestBright(t *testing.T, user Gamer) (out Bright) {
 	return Bright{
-		One:   BrightCharacter(user.Characters[0]),
-		Two:   BrightCharacter(user.Characters[1]),
-		Three: BrightCharacter(user.Characters[2]),
+		One:   BrightGuardian(user.Guardians[0]),
+		Two:   BrightGuardian(user.Guardians[1]),
+		Three: BrightGuardian(user.Guardians[2]),
 	}
 }
 
-func newTestShadow(t *testing.T, user User) (out Shadow) {
+func newTestShadow(t *testing.T, user Gamer) (out Shadow) {
 	return Shadow{
-		One:   ShadowCharacter(user.Characters[0]),
-		Two:   ShadowCharacter(user.Characters[1]),
-		Three: ShadowCharacter(user.Characters[2]),
+		One:   ShadowGuardian(user.Guardians[0]),
+		Two:   ShadowGuardian(user.Guardians[1]),
+		Three: ShadowGuardian(user.Guardians[2]),
 	}
 }
 
-func newTestTry(t *testing.T, user User) (out Try) {
+func newTestTry(t *testing.T, user Gamer) (out Try) {
 	return Try{
-		One:   TryCharacter(user.Characters[0]),
-		Two:   TryCharacter(user.Characters[1]),
-		Three: TryCharacter(user.Characters[2]),
+		One:   TryGuardian(user.Guardians[0]),
+		Two:   TryGuardian(user.Guardians[1]),
+		Three: TryGuardian(user.Guardians[2]),
 	}
 }
 

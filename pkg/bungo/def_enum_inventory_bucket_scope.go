@@ -15,7 +15,7 @@ func InventoryBucketScopes(key int) InventoryBucketScope {
 func InventoryBucketScopesE(key int) (InventoryBucketScope, error) {
 	switch key {
 	case 0:
-		return "Character", nil
+		return "Guardian", nil
 	default:
 		return "", errors.New(fmt.Sprintf("unknown key: %d", key))
 	}

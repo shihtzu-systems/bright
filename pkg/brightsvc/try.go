@@ -4,34 +4,37 @@ import (
 	"fmt"
 	"github.com/shihtzu-systems/bright/generated/bungie/datax"
 	"github.com/shihtzu-systems/bright/pkg/bungo"
-	"github.com/shihtzu-systems/bright/pkg/ghost"
 	"github.com/shihtzu-systems/bright/pkg/tower"
-	log "github.com/sirupsen/logrus"
 	"math/rand"
+	"strings"
 	"time"
 )
 
-func NewTryUser(dad bool, redis tower.Redis) (out ghost.TryUser) {
-	redis.Connect()
-	defer redis.Disconnect()
+type Barracks struct {
+	Tower tower.Tower
+}
 
-	return ghost.TryUser{
-		Name:         NewName(dad),
+func (b Barracks) ReportForDuty() (out bungo.Gamer) {
+	b.Tower.Redis.Connect()
+	defer b.Tower.Redis.Disconnect()
+
+	return bungo.Gamer{
+		Name:         NewName(b.Tower.Dad),
 		MembershipId: "0",
-		Characters: []bungo.Character{
-			newTitan(redis),
-			newHunter(redis),
-			newWarlock(redis),
+		Guardians: []bungo.Guardian{
+			b.Deploy("titan"),
+			b.Deploy("hunter"),
+			b.Deploy("warlock"),
 		},
 	}
 }
 
-func newTitan(redis tower.Redis) bungo.Character {
-	emblemDef := datax.GetInventoryItem(randomHash(emblemHashes), redis)
-	return bungo.Character{
-		Id:             "titan",
+func (b Barracks) Deploy(class string) bungo.Guardian {
+	emblemDef := datax.GetInventoryItem(randomHash(emblemHashes), b.Tower.Redis)
+	guardian := bungo.Guardian{
+		Id:             strings.ToLower(class),
 		MembershipType: 0,
-		Class:          "Titan",
+		Class:          strings.Title(class),
 		Level:          50,
 		Light:          750 + rand.New(rand.NewSource(time.Now().UnixNano())).Intn(170),
 		Emblem: bungo.Emblem{
@@ -47,112 +50,56 @@ func newTitan(redis tower.Redis) bungo.Character {
 				Alpha: emblemDef.BackgroundColor.Alpha,
 			},
 		},
-		Equipped: newOutfit("titan", redis),
-		Bag:      newBag("titan", redis),
 	}
+	b.Dress(&guardian)
+	b.Provision(&guardian)
+	return guardian
 }
 
-func newHunter(redis tower.Redis) bungo.Character {
-	emblemDef := datax.GetInventoryItem(randomHash(emblemHashes), redis)
-	return bungo.Character{
-		Id:             "hunter",
-		MembershipType: 0,
-		Class:          "Hunter",
-		Level:          50,
-		Light:          750 + rand.New(rand.NewSource(time.Now().UnixNano())).Intn(170),
-		Emblem: bungo.Emblem{
-			Name:            emblemDef.DisplayProperties.Name,
-			InventoryItemId: emblemDef.Hash,
-			IconUri:         emblemDef.DisplayProperties.Icon,
-			BannerUri:       emblemDef.SecondarySpecial,
-			IconOverlayUri:  emblemDef.SecondaryOverlay,
-			Background: bungo.Color{
-				Red:   emblemDef.BackgroundColor.Red,
-				Green: emblemDef.BackgroundColor.Green,
-				Blue:  emblemDef.BackgroundColor.Blue,
-				Alpha: emblemDef.BackgroundColor.Alpha,
-			},
-		},
-		Equipped: newOutfit("hunter", redis),
-		Bag:      newBag("hunter", redis),
-	}
-}
+func (b Barracks) Dress(guardian *bungo.Guardian) {
 
-func newWarlock(redis tower.Redis) bungo.Character {
-	emblemDef := datax.GetInventoryItem(randomHash(emblemHashes), redis)
-	return bungo.Character{
-		Id:             "warlock",
-		MembershipType: 0,
-		Class:          "Warlock",
-		Level:          50,
-		Light:          750 + rand.New(rand.NewSource(time.Now().UnixNano())).Intn(170),
-		Emblem: bungo.Emblem{
-			Name:            emblemDef.DisplayProperties.Name,
-			InventoryItemId: emblemDef.Hash,
-			IconUri:         emblemDef.DisplayProperties.Icon,
-			BannerUri:       emblemDef.SecondarySpecial,
-			IconOverlayUri:  emblemDef.SecondaryOverlay,
-			Background: bungo.Color{
-				Red:   emblemDef.BackgroundColor.Red,
-				Green: emblemDef.BackgroundColor.Green,
-				Blue:  emblemDef.BackgroundColor.Blue,
-				Alpha: emblemDef.BackgroundColor.Alpha,
-			},
-		},
-		Equipped: newOutfit("warlock", redis),
-		Bag:      newBag("warlock", redis),
-	}
-}
+	kineticWeapon := newWeaponInstance(guardian.Id, randomHash(kineticWeaponHashes), b.Tower.Redis)
+	energyWeapon := newWeaponInstance(guardian.Id, randomHash(energyWeaponHashes), b.Tower.Redis)
+	powerWeapon := newWeaponInstance(guardian.Id, randomHash(powerWeaponHashes), b.Tower.Redis)
 
-func newOutfit(characterId string, redis tower.Redis) bungo.Outfit {
-
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(kineticWeaponHashes), func(i, j int) {
-		kineticWeaponHashes[i], kineticWeaponHashes[j] = kineticWeaponHashes[j], kineticWeaponHashes[i]
-	})
-
-	kineticWeapon := newWeaponInstance(characterId, randomHash(kineticWeaponHashes), redis)
-	energyWeapon := newWeaponInstance(characterId, randomHash(energyWeaponHashes), redis)
-	powerWeapon := newWeaponInstance(characterId, randomHash(powerWeaponHashes), redis)
-
-	switch characterId {
+	switch guardian.Id {
 	case "warlock":
-		return bungo.Outfit{
+		guardian.Equipped = bungo.Outfit{
 			KineticWeapon: kineticWeapon,
 			EnergyWeapon:  energyWeapon,
 			PowerWeapon:   powerWeapon,
 
-			Helmet:    newArmorInstance(characterId, randomHash(warlockHelmetHashes), redis),
-			Gauntlets: newArmorInstance(characterId, randomHash(warlockGauntletHashes), redis),
-			Chest:     newArmorInstance(characterId, randomHash(warlockChestHashes), redis),
-			Leg:       newArmorInstance(characterId, randomHash(warlockLegHashes), redis),
-			Class:     newArmorInstance(characterId, randomHash(warlockClassHashes), redis),
+			Helmet:    newArmorInstance(guardian.Id, randomHash(warlockHelmetHashes), b.Tower.Redis),
+			Gauntlets: newArmorInstance(guardian.Id, randomHash(warlockGauntletHashes), b.Tower.Redis),
+			Chest:     newArmorInstance(guardian.Id, randomHash(warlockChestHashes), b.Tower.Redis),
+			Leg:       newArmorInstance(guardian.Id, randomHash(warlockLegHashes), b.Tower.Redis),
+			Class:     newArmorInstance(guardian.Id, randomHash(warlockClassHashes), b.Tower.Redis),
 		}
 	case "titan":
-		return bungo.Outfit{
+		guardian.Equipped = bungo.Outfit{
 			KineticWeapon: kineticWeapon,
 			EnergyWeapon:  energyWeapon,
 			PowerWeapon:   powerWeapon,
 
-			Helmet:    newArmorInstance(characterId, randomHash(titanHelmetHashes), redis),
-			Gauntlets: newArmorInstance(characterId, randomHash(titanGauntletHashes), redis),
-			Chest:     newArmorInstance(characterId, randomHash(titanChestHashes), redis),
-			Leg:       newArmorInstance(characterId, randomHash(titanLegHashes), redis),
-			Class:     newArmorInstance(characterId, randomHash(titanClassHashes), redis),
+			Helmet:    newArmorInstance(guardian.Id, randomHash(titanHelmetHashes), b.Tower.Redis),
+			Gauntlets: newArmorInstance(guardian.Id, randomHash(titanGauntletHashes), b.Tower.Redis),
+			Chest:     newArmorInstance(guardian.Id, randomHash(titanChestHashes), b.Tower.Redis),
+			Leg:       newArmorInstance(guardian.Id, randomHash(titanLegHashes), b.Tower.Redis),
+			Class:     newArmorInstance(guardian.Id, randomHash(titanClassHashes), b.Tower.Redis),
 		}
 	case "hunter":
 		fallthrough
 	default:
-		return bungo.Outfit{
+		guardian.Equipped = bungo.Outfit{
 			KineticWeapon: kineticWeapon,
 			EnergyWeapon:  energyWeapon,
 			PowerWeapon:   powerWeapon,
 
-			Helmet:    newArmorInstance(characterId, randomHash(hunterHelmetHashes), redis),
-			Gauntlets: newArmorInstance(characterId, randomHash(hunterGauntletHashes), redis),
-			Chest:     newArmorInstance(characterId, randomHash(hunterChestHashes), redis),
-			Leg:       newArmorInstance(characterId, randomHash(hunterLegHashes), redis),
-			Class:     newArmorInstance(characterId, randomHash(hunterClassHashes), redis),
+			Helmet:    newArmorInstance(guardian.Id, randomHash(hunterHelmetHashes), b.Tower.Redis),
+			Gauntlets: newArmorInstance(guardian.Id, randomHash(hunterGauntletHashes), b.Tower.Redis),
+			Chest:     newArmorInstance(guardian.Id, randomHash(hunterChestHashes), b.Tower.Redis),
+			Leg:       newArmorInstance(guardian.Id, randomHash(hunterLegHashes), b.Tower.Redis),
+			Class:     newArmorInstance(guardian.Id, randomHash(hunterClassHashes), b.Tower.Redis),
 		}
 	}
 }
@@ -165,19 +112,24 @@ func randomHash(hashes []int) int {
 	return hashes[0]
 }
 
-func newBag(characterId string, redis tower.Redis) (bag bungo.Bag) {
-
-	weapons := bestCrucibleWeapons(characterId, redis)
-	log.Debug("Bag Weapons: ", len(weapons))
-
-	armors := hunterArmors(characterId, redis)
-	log.Debug("Bag Armors: ", len(armors))
-
-	switch characterId {
+func (b Barracks) Provision(guardian *bungo.Guardian) {
+	switch guardian.Id {
+	case "warlock":
+		guardian.Bag = bungo.Bag{
+			Weapons: bestCrucibleWeapons(guardian.Id, b.Tower.Redis),
+			Armors:  hunterArmors(guardian.Id, b.Tower.Redis),
+		}
+	case "titan":
+		guardian.Bag = bungo.Bag{
+			Weapons: bestCrucibleWeapons(guardian.Id, b.Tower.Redis),
+			Armors:  hunterArmors(guardian.Id, b.Tower.Redis),
+		}
+	case "hunter":
+		fallthrough
 	default:
-		return bungo.Bag{
-			Weapons: weapons,
-			Armors:  armors,
+		guardian.Bag = bungo.Bag{
+			Weapons: bestCrucibleWeapons(guardian.Id, b.Tower.Redis),
+			Armors:  hunterArmors(guardian.Id, b.Tower.Redis),
 		}
 	}
 }

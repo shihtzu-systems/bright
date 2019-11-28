@@ -27,13 +27,7 @@ func (v Bingo) View(w http.ResponseWriter) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := tpl.ExecuteTemplate(w, "bingo", struct {
-		Tower tower.Tower
-		Board bingo.Board
-	}{
-		v.Tower,
-		v.Board,
-	}); err != nil {
+	if err := tpl.ExecuteTemplate(w, "bingo", v); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -22,8 +22,8 @@ func NewBungieClient(args NewBungieClientArgs) *resty.Client {
 	rClient.HostURL = bungieUrl
 	// global
 	rClient.SetHeaders(map[string]string{
-		"X-Api-Key":  args.ApiKey,
-		"User-Agent": fmt.Sprintf("Bright/%s AppId/%s (+%s;%s)", args.AppVersion, args.AppId, args.AppUrl, args.AppEmail),
+		"X-Api-Key":   args.ApiKey,
+		"Gamer-Agent": fmt.Sprintf("Bright/%s AppId/%s (+%s;%s)", args.AppVersion, args.AppId, args.AppUrl, args.AppEmail),
 	})
 	rClient.SetOutputDirectory("out/responses")
 	return rClient

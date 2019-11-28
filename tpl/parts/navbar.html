@@ -8,3 +8,46 @@
     </div>
 </nav>
 {{ end }}
+
+{{ define "guardian-navbar" }}
+    <nav class="navbar is-transparent is-fixed-top is-shadowless is-dark" role="navigation" aria-label="main navigation" style="background: black url({{ .Tower.BungieNetUrl }}/{{ .Guardian.Emblem.BannerUri }})  center ;">
+        <div class="navbar-brand center">
+
+            {{ with .Guardian }}
+            <a class="image left" href="/try">
+                <img  class="image is-64x64" src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}">
+            </a>
+            {{ end }}
+
+            <a class="navbar-burger burger has-text-white" role="button"  aria-label="menu" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-start" style="margin-left: .5rem">
+                {{ with .Guardian }}
+                <a class="navbar-item is-size-5 is-size-6-mobile has-text-light has-text-weight-semibold center"  href="/try">
+                    <span style="margin-left: 10px; text-shadow: 2px 2px 0 rgba({{ .Emblem.Background.Red }}, {{ .Emblem.Background.Green }}, {{ .Emblem.Background.Blue }}, .75);">{{ .Class }}</span>
+                </a>
+                {{ end }}
+            </div>
+            <div class="navbar-end" style="margin-right: 2rem">
+                {{ with .Guardian }}
+                <a class="navbar-item is-size-5 is-size-6-mobile has-text-light has-text-weight-semibold center"  href="/try/guardian/{{ .MembershipType }}/{{ .Id }}">
+                    <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}">
+                    <span style="margin-left: 10px; text-shadow: 2px 2px 0 rgba({{ .Emblem.Background.Red }}, {{ .Emblem.Background.Green }}, {{ .Emblem.Background.Blue }}, .75);">{{ .Class }}</span>
+                </a>
+                {{ end }}
+                {{ range .OtherGuardians }}
+                    <a class="navbar-item is-size-5 is-size-6-mobile has-text-light has-text-weight-semibold center"  href="/try/guardian/{{ .MembershipType }}/{{ .Id }}">
+                        <img src="{{ $.Tower.BungieNetUrl }}/{{ .Emblem.IconUri }}">
+                        <span style="margin-left: 10px; text-shadow: 2px 2px 0 rgba({{ .Emblem.Background.Red }}, {{ .Emblem.Background.Green }}, {{ .Emblem.Background.Blue }}, .75);">{{ .Class }}</span>
+                    </a>
+                {{ end }}
+            </div>
+        </div>
+    </nav>
+{{ end }}

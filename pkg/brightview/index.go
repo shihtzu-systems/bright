@@ -23,7 +23,10 @@ var (
 )
 
 type Index struct {
-	Tower tower.Tower
+	Tower        tower.Tower
+	BnetAuthPath string
+	TryPath      string
+	HackPath     string
 }
 
 func (v Index) View(w http.ResponseWriter) {
@@ -35,17 +38,7 @@ func (v Index) View(w http.ResponseWriter) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := tpl.ExecuteTemplate(w, "index", struct {
-		BnetAuthPath string
-		TryPath      string
-		HackPath     string
-		Tower        tower.Tower
-	}{
-		"/bnet/auth",
-		"/try",
-		"/hack",
-		v.Tower,
-	}); err != nil {
+	if err := tpl.ExecuteTemplate(w, "index", v); err != nil {
 		log.Fatal(err)
 	}
 }

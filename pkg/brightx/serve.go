@@ -72,6 +72,10 @@ func Serve(args ServeArgs) {
 	}
 	r.HandleFunc(TryPath(), try.HandleTry)
 	r.HandleFunc(TryPath("recycle"), try.HandleTryRecycle)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}"), try.HandleTryGuardian)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "weapon", "{weaponHash:[a-z0-9-]+}"), try.HandleTrySwapWeapon)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "armor", "{armorHash:[a-z0-9-]+}"), try.HandleTrySwapArmor)
+	r.HandleFunc(TryPath("guardian", "0", "{id:[a-z0-9-]+}", "swap", "{swapOut:[a-z0-9-]+}", "{swapIn:[a-z0-9-]+}"), try.HandleTrySwap)
 
 	// root controller
 	root := RootController{

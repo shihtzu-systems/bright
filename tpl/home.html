@@ -16,8 +16,8 @@
         </h1>
 
         <h2 class="subtitle is-size-2 is-size-4-mobile is-unselectable has-text-light has-text-weight-bold center" style="text-shadow: 2px 2px 0 rgba(175,175,175, .75);">
-            {{ if .Try }}
-            {{ .Ghost.Try.User.Name }}
+            {{ if .Tower.Try }}
+            {{ .Ghost.Try.Gamer.Name }}
               <a class="button is-dark is-outlined" style="margin-left: 1rem" href="/try/recycle">
               <span class="icon is-medium">
                 <i class="fas fa-recycle"></i>
@@ -46,7 +46,7 @@
                 <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
               </div>
               <div class="media-right">
-                <a href="/try/character/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                <a href="/try/guardian/{{ .MembershipType }}/{{ .Id }}" class="button is-large is-warning">
                     <span class="icon">
                       <i class="fas fa-street-view"></i>
                     </span>
@@ -74,7 +74,7 @@
                     <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
                   </div>
                   <div class="media-right">
-                    <a href="/try/character/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <a href="/try/guardian/{{ .MembershipType }}/{{ .Id }}" class="button is-large is-warning">
                     <span class="icon">
                       <i class="fas fa-street-view"></i>
                     </span>
@@ -102,7 +102,7 @@
                     <p class="subtitle is-size-6 has-text-warning has-text-weight-semibold" style="text-shadow: 2px 2px 0 rgba(75,75,75, .75);">✧ {{ .Light }}</p>
                   </div>
                   <div class="media-right">
-                    <a href="/try/character/{{ .MembershipType }}/{{ .Id }}/init" class="button is-large is-warning">
+                    <a href="/try/guardian/{{ .MembershipType }}/{{ .Id }}" class="button is-large is-warning">
                     <span class="icon">
                       <i class="fas fa-street-view"></i>
                     </span>

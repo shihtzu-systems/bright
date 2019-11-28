@@ -13,14 +13,14 @@ type TryUserArgs struct {
 }
 
 type TryUserOut struct {
-	CurrentUser bungo.CurrentUser
+	CurrentUser bungo.Gamer
 }
 
-func TryUser(args TryUserArgs) (out bungo.CurrentUser, err error) {
-	return bungo.CurrentUser{
+func TryUser(args TryUserArgs) (out bungo.Gamer, err error) {
+	return bungo.Gamer{
 		Name:         GenerateName(args.Dad),
 		MembershipId: "0",
-		Characters: []bungo.Character{
+		Guardians: []bungo.Guardian{
 			newTitan(args.Destiny),
 			newHunter(args.Destiny),
 			newWarlock(args.Destiny),
@@ -28,11 +28,11 @@ func TryUser(args TryUserArgs) (out bungo.CurrentUser, err error) {
 	}, nil
 }
 
-func TryUserX(dad bool) (out bungo.CurrentUser) {
-	return bungo.CurrentUser{
+func TryUserX(dad bool) (out bungo.Gamer) {
+	return bungo.Gamer{
 		Name:         GenerateName(dad),
 		MembershipId: "0",
-		Characters: []bungo.Character{
+		Guardians: []bungo.Guardian{
 			newTitanX(),
 			newHunterX(),
 			newWarlockX(),
@@ -40,8 +40,8 @@ func TryUserX(dad bool) (out bungo.CurrentUser) {
 	}
 }
 
-func newTitanX() bungo.Character {
-	return bungo.Character{
+func newTitanX() bungo.Guardian {
+	return bungo.Guardian{
 		Id:             tryTitanId,
 		MembershipType: 0,
 		Class:          "Titan",
@@ -50,8 +50,8 @@ func newTitanX() bungo.Character {
 	}
 }
 
-func newHunterX() bungo.Character {
-	return bungo.Character{
+func newHunterX() bungo.Guardian {
+	return bungo.Guardian{
 		Id:             tryHunterId,
 		MembershipType: 0,
 		Class:          "Hunter",
@@ -60,8 +60,8 @@ func newHunterX() bungo.Character {
 	}
 }
 
-func newWarlockX() bungo.Character {
-	return bungo.Character{
+func newWarlockX() bungo.Guardian {
+	return bungo.Guardian{
 		Id:             tryWarlockId,
 		MembershipType: 0,
 		Class:          "Warlock",
@@ -141,9 +141,9 @@ var emblems = []int{
 
 const tryTitanId = "titan"
 
-func newTitan(destiny data.Content) bungo.Character {
+func newTitan(destiny data.Content) bungo.Guardian {
 	emblemDef := destiny.InventoryItem.Find(emblems[randomGen.Intn(len(emblems))])
-	return bungo.Character{
+	return bungo.Guardian{
 		Id:             tryTitanId,
 		MembershipType: 0,
 		Class:          "Titan",
@@ -169,11 +169,11 @@ func newTitan(destiny data.Content) bungo.Character {
 
 const tryHunterId = "hunter"
 
-func newHunter(destiny data.Content) bungo.Character {
+func newHunter(destiny data.Content) bungo.Guardian {
 	emblemDef := destiny.InventoryItem.Find(emblems[randomGen.Intn(len(emblems))])
 	outfit := newOutfit(tryHunterId, destiny)
 	bag := newBag(tryHunterId, destiny)
-	return bungo.Character{
+	return bungo.Guardian{
 		Id:             tryHunterId,
 		MembershipType: 0,
 		Class:          "Hunter",
@@ -199,11 +199,11 @@ func newHunter(destiny data.Content) bungo.Character {
 
 const tryWarlockId = "warlock"
 
-func newWarlock(destiny data.Content) bungo.Character {
+func newWarlock(destiny data.Content) bungo.Guardian {
 	emblemDef := destiny.InventoryItem.Find(emblems[randomGen.Intn(len(emblems))])
 	outfit := newOutfit(tryWarlockId, destiny)
 	bag := newBag(tryWarlockId, destiny)
-	return bungo.Character{
+	return bungo.Guardian{
 		Id:             tryWarlockId,
 		MembershipType: 0,
 		Class:          "Warlock",

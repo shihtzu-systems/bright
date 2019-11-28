@@ -340,38 +340,38 @@ func Server(args ServerArgs) error {
 				Destiny:          args.Destiny,
 			})
 			if err != nil {
-				errRedirect(err, "CurrentUser", w)
+				errRedirect(err, "Gamer", w)
 				return
 			}
 
 			ghost.User = currentUser
-			ghost.BnetOne = bungo.Character{}
-			ghost.BnetTwo = bungo.Character{}
-			ghost.BnetThree = bungo.Character{}
-			ghost.BrightOne = bungo.Character{}
-			ghost.BrightTwo = bungo.Character{}
-			ghost.BrightThree = bungo.Character{}
+			ghost.BnetOne = bungo.Guardian{}
+			ghost.BnetTwo = bungo.Guardian{}
+			ghost.BnetThree = bungo.Guardian{}
+			ghost.BrightOne = bungo.Guardian{}
+			ghost.BrightTwo = bungo.Guardian{}
+			ghost.BrightThree = bungo.Guardian{}
 
-			if len(currentUser.Characters) >= 1 {
-				ghost.BnetOne = currentUser.Characters[0]
+			if len(currentUser.Guardians) >= 1 {
+				ghost.BnetOne = currentUser.Guardians[0]
 				if ghost.BrightOne.Id == "" {
-					ghost.BrightOne = currentUser.Characters[0]
+					ghost.BrightOne = currentUser.Guardians[0]
 				}
 			}
-			if len(currentUser.Characters) >= 2 {
-				ghost.BnetTwo = currentUser.Characters[1]
+			if len(currentUser.Guardians) >= 2 {
+				ghost.BnetTwo = currentUser.Guardians[1]
 				if ghost.BrightTwo.Id == "" {
-					ghost.BrightTwo = currentUser.Characters[1]
+					ghost.BrightTwo = currentUser.Guardians[1]
 				}
 			}
-			if len(currentUser.Characters) == 3 {
-				ghost.BnetThree = currentUser.Characters[2]
+			if len(currentUser.Guardians) == 3 {
+				ghost.BnetThree = currentUser.Guardians[2]
 				if ghost.BrightThree.Id == "" {
-					ghost.BrightThree = currentUser.Characters[2]
+					ghost.BrightThree = currentUser.Guardians[2]
 				}
 			}
 
-			ghost = ghost.MakeCurrent(currentUser.Characters[0])
+			ghost = ghost.MakeCurrent(currentUser.Guardians[0])
 
 			if err := saveGhost(redisAddress+":"+redisPort, systemName, id(w, r), ghost); err != nil {
 				errRedirect(err, "saveGhost", w)
@@ -388,7 +388,7 @@ func Server(args ServerArgs) error {
 				DisplayName       string
 				BungieUrl         string
 				CharacterBaseUri  string
-				Characters        []bungo.Character
+				Characters        []bungo.Guardian
 				AppVersion        string
 				GoogleAnalyticsId string
 			}{
@@ -443,10 +443,10 @@ func Server(args ServerArgs) error {
 				BungieUrl             string
 				CharacterBaseUri      string
 				DisplayName           string
-				BrightCharacter       bungo.Character
-				BrightOtherCharacters []bungo.Character
-				TakenCharacter        bungo.Character
-				TakenOtherCharacters  []bungo.Character
+				BrightCharacter       bungo.Guardian
+				BrightOtherCharacters []bungo.Guardian
+				TakenCharacter        bungo.Guardian
+				TakenOtherCharacters  []bungo.Guardian
 				TakenDiffs            int
 				AppVersion            string
 				GoogleAnalyticsId     string
@@ -485,7 +485,7 @@ func Server(args ServerArgs) error {
 				return
 			}
 
-			swapOut := character.Equipped.FindArmor(vars["instanceId"])
+			swapOut, _ := character.Equipped.FindArmor(vars["instanceId"])
 			if swapOut.InstanceId != "" {
 				log.Debug("Found: ", swapOut.InstanceId)
 			} else {
@@ -506,10 +506,10 @@ func Server(args ServerArgs) error {
 				BungieUrl             string
 				CharacterBaseUri      string
 				DisplayName           string
-				BrightCharacter       bungo.Character
-				BrightOtherCharacters []bungo.Character
-				TakenCharacter        bungo.Character
-				TakenOtherCharacters  []bungo.Character
+				BrightCharacter       bungo.Guardian
+				BrightOtherCharacters []bungo.Guardian
+				TakenCharacter        bungo.Guardian
+				TakenOtherCharacters  []bungo.Guardian
 				SwapType              string
 				SwapOut               bungo.Armor
 				SwapIns               []bungo.Armor
@@ -551,7 +551,7 @@ func Server(args ServerArgs) error {
 				return
 			}
 
-			swapOut := currentCharacter.Equipped.FindWeapon(vars["instanceId"])
+			swapOut, _ := currentCharacter.Equipped.FindWeapon(vars["instanceId"])
 			if swapOut.InstanceId != "" {
 				log.Debug("Found: ", swapOut.InstanceId)
 			} else {
@@ -572,10 +572,10 @@ func Server(args ServerArgs) error {
 				BungieUrl             string
 				CharacterBaseUri      string
 				DisplayName           string
-				BrightCharacter       bungo.Character
-				BrightOtherCharacters []bungo.Character
-				TakenCharacter        bungo.Character
-				TakenOtherCharacters  []bungo.Character
+				BrightCharacter       bungo.Guardian
+				BrightOtherCharacters []bungo.Guardian
+				TakenCharacter        bungo.Guardian
+				TakenOtherCharacters  []bungo.Guardian
 				SwapType              string
 				SwapOut               bungo.Weapon
 				SwapIns               []bungo.Weapon
@@ -623,58 +623,58 @@ func Server(args ServerArgs) error {
 				return
 			}
 
-			switch vars["swapType"] {
-			case "kinetic":
-				swapOut := currentCharacter.Equipped.KineticWeapon
-				swapIn, bag := currentCharacter.Bag.TakeWeapon(vars["swapIn"])
-
-				currentCharacter.Equipped.KineticWeapon = swapIn
-				currentCharacter.Bag = bag.StowWeapon(swapOut)
-			case "energy":
-				swapOut := currentCharacter.Equipped.EnergyWeapon
-				swapIn, bag := currentCharacter.Bag.TakeWeapon(vars["swapIn"])
-
-				currentCharacter.Equipped.EnergyWeapon = swapIn
-				currentCharacter.Bag = bag.StowWeapon(swapOut)
-			case "power":
-				swapOut := currentCharacter.Equipped.PowerWeapon
-				swapIn, bag := currentCharacter.Bag.TakeWeapon(vars["swapIn"])
-
-				currentCharacter.Equipped.PowerWeapon = swapIn
-				currentCharacter.Bag = bag.StowWeapon(swapOut)
-			case "helmet":
-				swapOut := currentCharacter.Equipped.Helmet
-				swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				currentCharacter.Equipped.Helmet = swapIn
-				currentCharacter.Bag = bag.StowArmor(swapOut)
-			case "gauntlets":
-				swapOut := currentCharacter.Equipped.Gauntlets
-				swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				currentCharacter.Equipped.Gauntlets = swapIn
-				currentCharacter.Bag = bag.StowArmor(swapOut)
-			case "chest":
-				swapOut := currentCharacter.Equipped.Chest
-				swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				currentCharacter.Equipped.Chest = swapIn
-				currentCharacter.Bag = bag.StowArmor(swapOut)
-			case "legs":
-				swapOut := currentCharacter.Equipped.Leg
-				swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				currentCharacter.Equipped.Leg = swapIn
-				currentCharacter.Bag = bag.StowArmor(swapOut)
-			case "class":
-				swapOut := currentCharacter.Equipped.Class
-				swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				currentCharacter.Equipped.Class = swapIn
-				currentCharacter.Bag = bag.StowArmor(swapOut)
-			default:
-				log.Warn("unknown swapType: ", vars["swapType"])
-			}
+			//switch vars["swapType"] {
+			//case "kinetic":
+			//	swapOut := currentCharacter.Equipped.KineticWeapon
+			//	swapIn, bag := currentCharacter.Bag.TakeWeapon(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.KineticWeapon = swapIn
+			//	currentCharacter.Bag = bag.StowWeapon(swapOut)
+			//case "energy":
+			//	swapOut := currentCharacter.Equipped.EnergyWeapon
+			//	swapIn, bag := currentCharacter.Bag.TakeWeapon(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.EnergyWeapon = swapIn
+			//	currentCharacter.Bag = bag.StowWeapon(swapOut)
+			//case "power":
+			//	swapOut := currentCharacter.Equipped.PowerWeapon
+			//	swapIn, bag := currentCharacter.Bag.TakeWeapon(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.PowerWeapon = swapIn
+			//	currentCharacter.Bag = bag.StowWeapon(swapOut)
+			//case "helmet":
+			//	swapOut := currentCharacter.Equipped.Helmet
+			//	swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.Helmet = swapIn
+			//	currentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "gauntlets":
+			//	swapOut := currentCharacter.Equipped.Gauntlets
+			//	swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.Gauntlets = swapIn
+			//	currentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "chest":
+			//	swapOut := currentCharacter.Equipped.Chest
+			//	swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.Chest = swapIn
+			//	currentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "legs":
+			//	swapOut := currentCharacter.Equipped.Leg
+			//	swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.Leg = swapIn
+			//	currentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "class":
+			//	swapOut := currentCharacter.Equipped.Class
+			//	swapIn, bag := currentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	currentCharacter.Equipped.Class = swapIn
+			//	currentCharacter.Bag = bag.StowArmor(swapOut)
+			//default:
+			//	log.Warn("unknown swapType: ", vars["swapType"])
+			//}
 
 			ghost = ghost.BrightSave(currentCharacter)
 
@@ -815,19 +815,19 @@ func Server(args ServerArgs) error {
 					return
 				}
 
-				ghost.TryUser = bungo.CurrentUser{
+				ghost.TryUser = bungo.Gamer{
 					Name:         tryUser.Name,
 					MembershipId: tryUser.MembershipId,
 				}
 
-				if len(tryUser.Characters) >= 1 {
-					ghost.TryOne = tryUser.Characters[0]
+				if len(tryUser.Guardians) >= 1 {
+					ghost.TryOne = tryUser.Guardians[0]
 				}
-				if len(tryUser.Characters) >= 2 {
-					ghost.TryTwo = tryUser.Characters[1]
+				if len(tryUser.Guardians) >= 2 {
+					ghost.TryTwo = tryUser.Guardians[1]
 				}
-				if len(tryUser.Characters) == 3 {
-					ghost.TryThree = tryUser.Characters[2]
+				if len(tryUser.Guardians) == 3 {
+					ghost.TryThree = tryUser.Guardians[2]
 				}
 				ghost = ghost.MakeTryCurrent(ghost.TryOne)
 			}
@@ -847,7 +847,7 @@ func Server(args ServerArgs) error {
 				BungieUrl         string
 				CharacterBaseUri  string
 				DisplayName       string
-				Characters        []bungo.Character
+				Characters        []bungo.Guardian
 				AppVersion        string
 				GoogleAnalyticsId string
 			}{
@@ -871,11 +871,11 @@ func Server(args ServerArgs) error {
 				return
 			}
 
-			ghost.TryUser = bungo.CurrentUser{}
+			ghost.TryUser = bungo.Gamer{}
 			ghost.TryCurrentId = ""
-			ghost.TryOne = bungo.Character{}
-			ghost.TryTwo = bungo.Character{}
-			ghost.TryThree = bungo.Character{}
+			ghost.TryOne = bungo.Guardian{}
+			ghost.TryTwo = bungo.Guardian{}
+			ghost.TryThree = bungo.Guardian{}
 
 			if err := saveGhost(redisAddress+":"+redisPort, systemName, id(w, r), ghost); err != nil {
 				errRedirect(err, "saveGhost", w)
@@ -923,10 +923,10 @@ func Server(args ServerArgs) error {
 				BungieUrl             string
 				CharacterBaseUri      string
 				DisplayName           string
-				BrightCharacter       bungo.Character
-				BrightOtherCharacters []bungo.Character
-				TakenCharacter        bungo.Character
-				TakenOtherCharacters  []bungo.Character
+				BrightCharacter       bungo.Guardian
+				BrightOtherCharacters []bungo.Guardian
+				TakenCharacter        bungo.Guardian
+				TakenOtherCharacters  []bungo.Guardian
 				TakenDiffs            int
 				AppVersion            string
 				GoogleAnalyticsId     string
@@ -962,7 +962,7 @@ func Server(args ServerArgs) error {
 				return
 			}
 
-			swapOut := tryCurrentCharacter.Equipped.FindArmor(vars["instanceId"])
+			swapOut, _ := tryCurrentCharacter.Equipped.FindArmor(vars["instanceId"])
 			if swapOut.InstanceId != "" {
 				log.Debug("Found: ", swapOut.InstanceId)
 			} else {
@@ -983,10 +983,10 @@ func Server(args ServerArgs) error {
 				BungieUrl             string
 				CharacterBaseUri      string
 				DisplayName           string
-				BrightCharacter       bungo.Character
-				BrightOtherCharacters []bungo.Character
-				TakenCharacter        bungo.Character
-				TakenOtherCharacters  []bungo.Character
+				BrightCharacter       bungo.Guardian
+				BrightOtherCharacters []bungo.Guardian
+				TakenCharacter        bungo.Guardian
+				TakenOtherCharacters  []bungo.Guardian
 				SwapType              string
 				SwapOut               bungo.Armor
 				SwapIns               []bungo.Armor
@@ -1025,7 +1025,7 @@ func Server(args ServerArgs) error {
 				return
 			}
 
-			swapOut := tryCurrentCharacter.Equipped.FindWeapon(vars["instanceId"])
+			swapOut, _ := tryCurrentCharacter.Equipped.FindWeapon(vars["instanceId"])
 			if swapOut.InstanceId != "" {
 				log.Debug("Found: ", swapOut.InstanceId)
 			} else {
@@ -1046,10 +1046,10 @@ func Server(args ServerArgs) error {
 				BungieUrl             string
 				CharacterBaseUri      string
 				DisplayName           string
-				BrightCharacter       bungo.Character
-				BrightOtherCharacters []bungo.Character
-				TakenCharacter        bungo.Character
-				TakenOtherCharacters  []bungo.Character
+				BrightCharacter       bungo.Guardian
+				BrightOtherCharacters []bungo.Guardian
+				TakenCharacter        bungo.Guardian
+				TakenOtherCharacters  []bungo.Guardian
 				SwapType              string
 				SwapOut               bungo.Weapon
 				SwapIns               []bungo.Weapon
@@ -1087,59 +1087,59 @@ func Server(args ServerArgs) error {
 				redirect("/try", w)
 				return
 			}
-
-			switch vars["swapType"] {
-			case "kinetic":
-				swapOut := tryCurrentCharacter.Equipped.KineticWeapon
-				swapIn, bag := tryCurrentCharacter.Bag.TakeWeapon(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.KineticWeapon = swapIn
-				tryCurrentCharacter.Bag = bag.StowWeapon(swapOut)
-			case "energy":
-				swapOut := tryCurrentCharacter.Equipped.EnergyWeapon
-				swapIn, bag := tryCurrentCharacter.Bag.TakeWeapon(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.EnergyWeapon = swapIn
-				tryCurrentCharacter.Bag = bag.StowWeapon(swapOut)
-			case "power":
-				swapOut := tryCurrentCharacter.Equipped.PowerWeapon
-				swapIn, bag := tryCurrentCharacter.Bag.TakeWeapon(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.PowerWeapon = swapIn
-				tryCurrentCharacter.Bag = bag.StowWeapon(swapOut)
-			case "helmet":
-				swapOut := tryCurrentCharacter.Equipped.Helmet
-				swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.Helmet = swapIn
-				tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
-			case "gauntlets":
-				swapOut := tryCurrentCharacter.Equipped.Gauntlets
-				swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.Gauntlets = swapIn
-				tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
-			case "chest":
-				swapOut := tryCurrentCharacter.Equipped.Chest
-				swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.Chest = swapIn
-				tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
-			case "legs":
-				swapOut := tryCurrentCharacter.Equipped.Leg
-				swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.Leg = swapIn
-				tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
-			case "class":
-				swapOut := tryCurrentCharacter.Equipped.Class
-				swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
-
-				tryCurrentCharacter.Equipped.Class = swapIn
-				tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
-			default:
-				log.Warn("unknown swapType: ", vars["swapType"])
-			}
+			//
+			//switch vars["swapType"] {
+			//case "kinetic":
+			//	swapOut := tryCurrentCharacter.Equipped.KineticWeapon
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeWeapon(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.KineticWeapon = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowWeapon(swapOut)
+			//case "energy":
+			//	swapOut := tryCurrentCharacter.Equipped.EnergyWeapon
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeWeapon(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.EnergyWeapon = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowWeapon(swapOut)
+			//case "power":
+			//	swapOut := tryCurrentCharacter.Equipped.PowerWeapon
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeWeapon(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.PowerWeapon = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowWeapon(swapOut)
+			//case "helmet":
+			//	swapOut := tryCurrentCharacter.Equipped.Helmet
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.Helmet = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "gauntlets":
+			//	swapOut := tryCurrentCharacter.Equipped.Gauntlets
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.Gauntlets = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "chest":
+			//	swapOut := tryCurrentCharacter.Equipped.Chest
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.Chest = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "legs":
+			//	swapOut := tryCurrentCharacter.Equipped.Leg
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.Leg = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
+			//case "class":
+			//	swapOut := tryCurrentCharacter.Equipped.Class
+			//	swapIn, bag := tryCurrentCharacter.Bag.TakeArmor(vars["swapIn"])
+			//
+			//	tryCurrentCharacter.Equipped.Class = swapIn
+			//	tryCurrentCharacter.Bag = bag.StowArmor(swapOut)
+			//default:
+			//	log.Warn("unknown swapType: ", vars["swapType"])
+			//}
 
 			ghost = ghost.TrySave(tryCurrentCharacter)
 			ghost = ghost.MakeTryCurrent(tryCurrentCharacter)
@@ -1366,30 +1366,30 @@ type Tower struct {
 }
 
 type Ghost struct {
-	User bungo.CurrentUser
+	User bungo.Gamer
 
 	CurrentId string
 
-	BnetOne   bungo.Character
-	BnetTwo   bungo.Character
-	BnetThree bungo.Character
+	BnetOne   bungo.Guardian
+	BnetTwo   bungo.Guardian
+	BnetThree bungo.Guardian
 
-	BrightOne   bungo.Character
-	BrightTwo   bungo.Character
-	BrightThree bungo.Character
+	BrightOne   bungo.Guardian
+	BrightTwo   bungo.Guardian
+	BrightThree bungo.Guardian
 
-	TryUser      bungo.CurrentUser
+	TryUser      bungo.Gamer
 	TryCurrentId string
-	TryOne       bungo.Character
-	TryTwo       bungo.Character
-	TryThree     bungo.Character
+	TryOne       bungo.Guardian
+	TryTwo       bungo.Guardian
+	TryThree     bungo.Guardian
 
 	Token BungieToken
 }
 
 func (g Ghost) CurrentDiff() int {
 	log.Debug("search for current: ", g.CurrentId)
-	bnet := bungo.Character{}
+	bnet := bungo.Guardian{}
 	switch g.CurrentId {
 	case g.BnetOne.Id:
 		bnet = g.BnetOne
@@ -1399,7 +1399,7 @@ func (g Ghost) CurrentDiff() int {
 		bnet = g.BnetThree
 	}
 
-	bright := bungo.Character{}
+	bright := bungo.Guardian{}
 	switch g.CurrentId {
 	case g.BrightOne.Id:
 		bright = g.BrightOne
@@ -1411,7 +1411,7 @@ func (g Ghost) CurrentDiff() int {
 	return len(bright.Differences(bnet))
 }
 
-func (g Ghost) MakeCurrent(character bungo.Character) (out Ghost) {
+func (g Ghost) MakeCurrent(character bungo.Guardian) (out Ghost) {
 	// blind copy
 	_ = copier.Copy(&out, &g)
 
@@ -1435,7 +1435,7 @@ func (g Ghost) MakeCurrentId(id string) (out Ghost) {
 	return out
 }
 
-func (g Ghost) BrightSave(character bungo.Character) (out Ghost) {
+func (g Ghost) BrightSave(character bungo.Guardian) (out Ghost) {
 	// blind copy
 	_ = copier.Copy(&out, &g)
 
@@ -1456,7 +1456,7 @@ func (g Ghost) BrightSave(character bungo.Character) (out Ghost) {
 	return out
 }
 
-func (g Ghost) BnetSave(character bungo.Character) (out Ghost) {
+func (g Ghost) BnetSave(character bungo.Guardian) (out Ghost) {
 	// blind copy
 	_ = copier.Copy(&out, &g)
 
@@ -1477,7 +1477,7 @@ func (g Ghost) BnetSave(character bungo.Character) (out Ghost) {
 	return out
 }
 
-func (g Ghost) RetrieveCurrentBnet() bungo.Character {
+func (g Ghost) RetrieveCurrentBnet() bungo.Guardian {
 	log.Debug("search for current: ", g.CurrentId)
 	switch g.CurrentId {
 	case g.BnetOne.Id:
@@ -1491,11 +1491,11 @@ func (g Ghost) RetrieveCurrentBnet() bungo.Character {
 		return g.BnetThree
 	default:
 		log.Debug("not found: ", g.CurrentId)
-		return bungo.Character{}
+		return bungo.Guardian{}
 	}
 }
 
-func (g Ghost) RetrieveCurrentBright() bungo.Character {
+func (g Ghost) RetrieveCurrentBright() bungo.Guardian {
 	log.Debug("search for current: ", g.CurrentId)
 	switch g.CurrentId {
 	case g.BrightOne.Id:
@@ -1509,11 +1509,11 @@ func (g Ghost) RetrieveCurrentBright() bungo.Character {
 		return g.BrightThree
 	default:
 		log.Debug("not found: ", g.CurrentId)
-		return bungo.Character{}
+		return bungo.Guardian{}
 	}
 }
 
-func (g Ghost) FindBnetCharacter(characterId string) (out bungo.Character) {
+func (g Ghost) FindBnetCharacter(characterId string) (out bungo.Guardian) {
 	log.Debug("search for: ", characterId)
 	switch characterId {
 	case g.BnetOne.Id:
@@ -1526,11 +1526,11 @@ func (g Ghost) FindBnetCharacter(characterId string) (out bungo.Character) {
 		log.Debug("found: ", characterId)
 		return g.BnetThree
 	default:
-		return bungo.Character{}
+		return bungo.Guardian{}
 	}
 }
 
-func (g Ghost) FindBrightCharacter(characterId string) (out bungo.Character) {
+func (g Ghost) FindBrightCharacter(characterId string) (out bungo.Guardian) {
 	log.Debug("search for: ", characterId)
 	switch characterId {
 	case g.BrightOne.Id:
@@ -1543,27 +1543,27 @@ func (g Ghost) FindBrightCharacter(characterId string) (out bungo.Character) {
 		log.Debug("found: ", characterId)
 		return g.BrightThree
 	default:
-		return bungo.Character{}
+		return bungo.Guardian{}
 	}
 }
 
-func (g Ghost) RetrieveAllBnetCharacters() (out []bungo.Character) {
-	return []bungo.Character{
+func (g Ghost) RetrieveAllBnetCharacters() (out []bungo.Guardian) {
+	return []bungo.Guardian{
 		g.BnetOne,
 		g.BnetTwo,
 		g.BnetThree,
 	}
 }
 
-func (g Ghost) RetrieveAllBrightCharacters() (out []bungo.Character) {
-	return []bungo.Character{
+func (g Ghost) RetrieveAllBrightCharacters() (out []bungo.Guardian) {
+	return []bungo.Guardian{
 		g.BrightOne,
 		g.BrightTwo,
 		g.BrightThree,
 	}
 }
 
-func (g Ghost) RetrieveOtherBnetCharacters() (out []bungo.Character) {
+func (g Ghost) RetrieveOtherBnetCharacters() (out []bungo.Guardian) {
 	log.Trace("current character is: ", g.CurrentId)
 	if g.BnetOne.Id != g.CurrentId {
 		log.Trace("adding other character: ", g.BnetOne.Id)
@@ -1581,7 +1581,7 @@ func (g Ghost) RetrieveOtherBnetCharacters() (out []bungo.Character) {
 	return out
 }
 
-func (g Ghost) RetrieveOtherBrightCharacters() (out []bungo.Character) {
+func (g Ghost) RetrieveOtherBrightCharacters() (out []bungo.Guardian) {
 	log.Trace("current character is: ", g.CurrentId)
 	if g.BrightOne.Id != g.CurrentId {
 		log.Trace("adding other character: ", g.BrightOne.Id)
@@ -1599,7 +1599,7 @@ func (g Ghost) RetrieveOtherBrightCharacters() (out []bungo.Character) {
 	return out
 }
 
-func (g Ghost) MakeTryCurrent(character bungo.Character) (out Ghost) {
+func (g Ghost) MakeTryCurrent(character bungo.Guardian) (out Ghost) {
 	// blind copy
 	_ = copier.Copy(&out, &g)
 
@@ -1607,7 +1607,7 @@ func (g Ghost) MakeTryCurrent(character bungo.Character) (out Ghost) {
 	return out
 }
 
-func (g Ghost) TrySave(character bungo.Character) (out Ghost) {
+func (g Ghost) TrySave(character bungo.Guardian) (out Ghost) {
 	// blind copy
 	_ = copier.Copy(&out, &g)
 
@@ -1622,7 +1622,7 @@ func (g Ghost) TrySave(character bungo.Character) (out Ghost) {
 	return out
 }
 
-func (g Ghost) RetrieveTryCurrentCharacter() bungo.Character {
+func (g Ghost) RetrieveTryCurrentCharacter() bungo.Guardian {
 	log.Trace("search for current: ", g.TryCurrentId)
 	switch g.TryCurrentId {
 	case g.TryOne.Id:
@@ -1636,11 +1636,11 @@ func (g Ghost) RetrieveTryCurrentCharacter() bungo.Character {
 		return g.TryThree
 	default:
 		log.Trace("not found: ", g.TryCurrentId)
-		return bungo.Character{}
+		return bungo.Guardian{}
 	}
 }
 
-func (g Ghost) FindTryCharacter(characterId string) (out bungo.Character) {
+func (g Ghost) FindTryCharacter(characterId string) (out bungo.Guardian) {
 	log.Trace("search for: ", characterId)
 	switch characterId {
 	case g.TryOne.Id:
@@ -1653,19 +1653,19 @@ func (g Ghost) FindTryCharacter(characterId string) (out bungo.Character) {
 		log.Trace("found: ", characterId)
 		return g.TryThree
 	default:
-		return bungo.Character{}
+		return bungo.Guardian{}
 	}
 }
 
-func (g Ghost) RetrieveAllTryCharacters() (out []bungo.Character) {
-	return []bungo.Character{
+func (g Ghost) RetrieveAllTryCharacters() (out []bungo.Guardian) {
+	return []bungo.Guardian{
 		g.TryOne,
 		g.TryTwo,
 		g.TryThree,
 	}
 }
 
-func (g Ghost) RetrieveTryOtherCharacters() (out []bungo.Character) {
+func (g Ghost) RetrieveTryOtherCharacters() (out []bungo.Guardian) {
 	log.Trace("current character is: ", g.TryCurrentId)
 	if g.TryOne.Id != g.TryCurrentId {
 		log.Trace("adding other character: ", g.TryOne.Id)

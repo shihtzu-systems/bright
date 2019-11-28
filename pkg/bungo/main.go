@@ -5,13 +5,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type CurrentUser struct {
+type Gamer struct {
 	Name         string
 	MembershipId string
-	Characters   []Character
+	Guardians    []Guardian
 }
 
-type Character struct {
+type Guardian struct {
 	Id             string `yaml:"id" json:"id"`
 	MembershipType int    `yaml:"membershipType" json:"membership_type"`
 
@@ -25,38 +25,81 @@ type Character struct {
 	Equipped Outfit `yaml:"equipped" json:"equipped"`
 }
 
-func (c Character) String() string {
+func (g Guardian) String() string {
 	return fmt.Sprintf("id=%s\nemblem=%s\nclass=%s\nkinetic=%s\nenergy=%s\npower=%s\nclass-item=%s\narmors=%d\nweapons=%d",
-		c.Id, c.Emblem.Name, c.Class, c.Equipped.KineticWeapon.Name, c.Equipped.EnergyWeapon.Name, c.Equipped.PowerWeapon.Name, c.Equipped.Class.Name, len(c.Bag.Armors), len(c.Bag.Weapons))
+		g.Id, g.Emblem.Name, g.Class, g.Equipped.KineticWeapon.Name, g.Equipped.EnergyWeapon.Name, g.Equipped.PowerWeapon.Name, g.Equipped.Class.Name, len(g.Bag.Armors), len(g.Bag.Weapons))
 }
 
-func (c Character) Differences(other Character) (out []string) {
-	if c.Equipped.KineticWeapon.InstanceId != other.Equipped.KineticWeapon.InstanceId {
-		out = append(out, c.Equipped.KineticWeapon.InstanceId)
+func (g Guardian) Differences(other Guardian) (out []string) {
+	if g.Equipped.KineticWeapon.InstanceId != other.Equipped.KineticWeapon.InstanceId {
+		out = append(out, g.Equipped.KineticWeapon.InstanceId)
 	}
-	if c.Equipped.EnergyWeapon.InstanceId != other.Equipped.EnergyWeapon.InstanceId {
-		out = append(out, c.Equipped.EnergyWeapon.InstanceId)
+	if g.Equipped.EnergyWeapon.InstanceId != other.Equipped.EnergyWeapon.InstanceId {
+		out = append(out, g.Equipped.EnergyWeapon.InstanceId)
 	}
-	if c.Equipped.PowerWeapon.InstanceId != other.Equipped.PowerWeapon.InstanceId {
-		out = append(out, c.Equipped.PowerWeapon.InstanceId)
+	if g.Equipped.PowerWeapon.InstanceId != other.Equipped.PowerWeapon.InstanceId {
+		out = append(out, g.Equipped.PowerWeapon.InstanceId)
 	}
 
-	if c.Equipped.Helmet.InstanceId != other.Equipped.Helmet.InstanceId {
-		out = append(out, c.Equipped.Helmet.InstanceId)
+	if g.Equipped.Helmet.InstanceId != other.Equipped.Helmet.InstanceId {
+		out = append(out, g.Equipped.Helmet.InstanceId)
 	}
-	if c.Equipped.Gauntlets.InstanceId != other.Equipped.Gauntlets.InstanceId {
-		out = append(out, c.Equipped.Gauntlets.InstanceId)
+	if g.Equipped.Gauntlets.InstanceId != other.Equipped.Gauntlets.InstanceId {
+		out = append(out, g.Equipped.Gauntlets.InstanceId)
 	}
-	if c.Equipped.Chest.InstanceId != other.Equipped.Chest.InstanceId {
-		out = append(out, c.Equipped.Chest.InstanceId)
+	if g.Equipped.Chest.InstanceId != other.Equipped.Chest.InstanceId {
+		out = append(out, g.Equipped.Chest.InstanceId)
 	}
-	if c.Equipped.Leg.InstanceId != other.Equipped.Leg.InstanceId {
-		out = append(out, c.Equipped.Leg.InstanceId)
+	if g.Equipped.Leg.InstanceId != other.Equipped.Leg.InstanceId {
+		out = append(out, g.Equipped.Leg.InstanceId)
 	}
-	if c.Equipped.Class.InstanceId != other.Equipped.Class.InstanceId {
-		out = append(out, c.Equipped.Class.InstanceId)
+	if g.Equipped.Class.InstanceId != other.Equipped.Class.InstanceId {
+		out = append(out, g.Equipped.Class.InstanceId)
 	}
 	return out
+}
+
+func (g *Guardian) SwapWeapon(swapOut Weapon, swapIn Weapon) {
+	switch swapOut.Slot.Name {
+	case g.Equipped.KineticWeapon.Slot.Name:
+		g.Bag.StowWeapon(swapOut)
+		g.Bag.TakeWeapon(swapIn)
+		log.Debug("KINETECIDJfoidsjaoiajsdoifja ", len(g.Bag.Weapons))
+		g.Equipped.KineticWeapon = swapIn
+	case g.Equipped.EnergyWeapon.Slot.Name:
+		g.Bag.StowWeapon(swapOut)
+		g.Bag.TakeWeapon(swapIn)
+		g.Equipped.EnergyWeapon = swapIn
+	case g.Equipped.PowerWeapon.Slot.Name:
+		g.Bag.StowWeapon(swapOut)
+		g.Bag.TakeWeapon(swapIn)
+		g.Equipped.PowerWeapon = swapIn
+	}
+}
+
+func (g *Guardian) SwapArmor(swapOut Armor, swapIn Armor) {
+	switch swapOut.Slot.Name {
+	case g.Equipped.Helmet.Slot.Name:
+		g.Bag.StowArmor(swapOut)
+		g.Bag.TakeArmor(swapIn)
+		g.Equipped.Helmet = swapIn
+	case g.Equipped.Gauntlets.Slot.Name:
+		g.Bag.StowArmor(swapOut)
+		g.Bag.TakeArmor(swapIn)
+		g.Equipped.Gauntlets = swapIn
+	case g.Equipped.Chest.Slot.Name:
+		g.Bag.StowArmor(swapOut)
+		g.Bag.TakeArmor(swapIn)
+		g.Equipped.Chest = swapIn
+	case g.Equipped.Leg.Slot.Name:
+		g.Bag.StowArmor(swapOut)
+		g.Bag.TakeArmor(swapIn)
+		g.Equipped.Leg = swapIn
+	case g.Equipped.Class.Slot.Name:
+		g.Bag.StowArmor(swapOut)
+		g.Bag.TakeArmor(swapIn)
+		g.Equipped.Class = swapIn
+	}
 }
 
 type Outfit struct {
@@ -71,34 +114,42 @@ type Outfit struct {
 	Class     Armor `yaml:"class" json:"class"`
 }
 
-func (o Outfit) FindWeapon(instanceId string) Weapon {
+func (o Outfit) FindWeapon(instanceId string) (out Weapon, found bool) {
 	log.Debug("Outfit->FindWeapon: ", instanceId)
 	switch instanceId {
 	case o.KineticWeapon.InstanceId:
-		return o.KineticWeapon
+		out = o.KineticWeapon
+		found = true
 	case o.EnergyWeapon.InstanceId:
-		return o.EnergyWeapon
+		out = o.EnergyWeapon
+		found = true
 	case o.PowerWeapon.InstanceId:
-		return o.PowerWeapon
+		out = o.PowerWeapon
+		found = true
 	}
-	return Weapon{}
+	return out, found
 }
 
-func (o Outfit) FindArmor(instanceId string) Armor {
+func (o Outfit) FindArmor(instanceId string) (out Armor, found bool) {
 	log.Debug("Outfit->FindArmor: ", instanceId)
 	switch instanceId {
 	case o.Helmet.InstanceId:
-		return o.Helmet
+		out = o.Helmet
+		found = true
 	case o.Gauntlets.InstanceId:
-		return o.Gauntlets
+		out = o.Gauntlets
+		found = true
 	case o.Chest.InstanceId:
-		return o.Chest
+		out = o.Chest
+		found = true
 	case o.Leg.InstanceId:
-		return o.Leg
+		out = o.Leg
+		found = true
 	case o.Class.InstanceId:
-		return o.Class
+		out = o.Class
+		found = true
 	}
-	return Armor{}
+	return out, found
 }
 
 type Bag struct {
@@ -106,50 +157,42 @@ type Bag struct {
 	Armors  []Armor  `yaml:"armors" json:"armor"`
 }
 
-func (b Bag) FindWeapon(instanceId string) Weapon {
+func (b Bag) FindWeapon(instanceId string) (out Weapon, found bool) {
 	log.Debug("Bag->FindWeapon: ", instanceId)
 	for _, weapon := range b.Weapons {
 		if weapon.InstanceId == instanceId {
-			return weapon
+			out = weapon
+			found = true
+			break
 		}
 	}
-	return Weapon{}
+	return out, found
 }
 
-func (b Bag) TakeWeapon(instanceId string) (Weapon, Bag) {
-	log.Debug("Bag->TakeWeapon: ", instanceId)
-	var found Weapon
-	var out Bag
-	for _, weapon := range b.Weapons {
-		if weapon.InstanceId == instanceId {
-			found = weapon
-		} else {
-			out.Weapons = append(out.Weapons, weapon)
+func (b *Bag) TakeWeapon(instance Weapon) {
+	log.Debug("Bag->TakeWeapon: ", instance)
+	var weapons []Weapon
+	for _, w := range b.Weapons {
+		if w.InstanceId == instance.InstanceId {
+			continue
 		}
+		weapons = append(weapons, w)
 	}
-	for _, armor := range b.Armors {
-		out.Armors = append(out.Armors, armor)
-	}
-	return found, out
+	b.Weapons = weapons
 }
 
-func (b Bag) StowWeapon(piece Weapon) Bag {
-	log.Debug("Bag->StowWeapon: ", piece.InstanceId)
-	var out Bag
-	found := false
-	for _, weapon := range b.Weapons {
-		if weapon.InstanceId == piece.InstanceId {
+func (b *Bag) StowWeapon(instance Weapon) {
+	log.Debug("Bag->StowWeapon: ", instance.InstanceId)
+	var found bool
+	for _, w := range b.Weapons {
+		if w.InstanceId == instance.InstanceId {
 			found = true
 			break
 		}
 	}
 	if !found {
-		out.Weapons = append(b.Weapons, piece)
+		b.Weapons = append(b.Weapons, instance)
 	}
-	for _, armor := range b.Armors {
-		out.Armors = append(out.Armors, armor)
-	}
-	return out
 }
 
 func (b Bag) FindWeapons(slot string) (out []Weapon) {
@@ -162,50 +205,41 @@ func (b Bag) FindWeapons(slot string) (out []Weapon) {
 	return out
 }
 
-func (b Bag) FindArmor(instanceId string) Armor {
+func (b Bag) FindArmor(instanceId string) (out Armor, found bool) {
 	log.Debugf("Bag->FindArmor: %s [%d]", instanceId, len(b.Armors))
 	for _, armor := range b.Armors {
 		if armor.InstanceId == instanceId {
-			return armor
+			out = armor
+			found = true
+			break
 		}
 	}
-	return Armor{}
+	return out, found
 }
-
-func (b Bag) TakeArmor(instanceId string) (Armor, Bag) {
-	log.Debug("Bag->TakeArmor: ", instanceId)
-	var found Armor
-	var out Bag
-	for _, armor := range b.Armors {
-		if armor.InstanceId == instanceId {
-			found = armor
-		} else {
-			out.Armors = append(out.Armors, armor)
+func (b *Bag) TakeArmor(instance Armor) {
+	log.Debug("Bag->TakeArmor: ", instance.InstanceId)
+	var armors []Armor
+	for _, a := range b.Armors {
+		if a.InstanceId == instance.InstanceId {
+			continue
 		}
+		armors = append(armors, a)
 	}
-	for _, weapon := range b.Weapons {
-		out.Weapons = append(out.Weapons, weapon)
-	}
-	return found, out
+	b.Armors = armors
 }
 
-func (b Bag) StowArmor(piece Armor) Bag {
-	log.Debug("Bag->StowArmor: ", piece.InstanceId)
-	var out Bag
-	found := false
-	for _, armor := range b.Armors {
-		if armor.InstanceId == piece.InstanceId {
+func (b *Bag) StowArmor(instance Armor) {
+	log.Debug("Bag->StowArmor: ", instance.InstanceId)
+	var found bool
+	for _, a := range b.Armors {
+		if a.InstanceId == instance.InstanceId {
 			found = true
 			break
 		}
 	}
 	if !found {
-		out.Armors = append(b.Armors, piece)
+		b.Armors = append(b.Armors, instance)
 	}
-	for _, weapon := range b.Weapons {
-		out.Weapons = append(out.Weapons, weapon)
-	}
-	return out
 }
 
 func (b Bag) FindArmors(slot string) (out []Armor) {

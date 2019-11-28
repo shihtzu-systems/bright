@@ -19,32 +19,32 @@ type CurrentUserArgs struct {
 	Destiny          data.Content
 }
 
-func CurrentUser(args CurrentUserArgs) (out bungo.CurrentUser, err error) {
+func CurrentUser(args CurrentUserArgs) (out bungo.Gamer, err error) {
 	freshToken, err := refresh(args.BungieClient, args.OathClientId, args.OathClientSecret, args.Auth)
 	if err != nil {
-		return bungo.CurrentUser{}, err
+		return bungo.Gamer{}, err
 	}
 	log.Debug(freshToken.MembershipId)
 
 	getMembershipDataForCurrentUserResponse, err := args.BungieClient.R().
 		EnableTrace().
 		SetAuthToken(freshToken.AccessToken).
-		Get(bungieApiUri + "/User/GetMembershipsForCurrentUser/")
+		Get(bungieApiUri + "/Gamer/GetMembershipsForCurrentUser/")
 	if err != nil {
-		return bungo.CurrentUser{}, err
+		return bungo.Gamer{}, err
 	}
 
 	var getMembershipDataForCurrentUser bungo.GetMembershipDataForCurrentUser
 	if err := json.Unmarshal(getMembershipDataForCurrentUserResponse.Body(), &getMembershipDataForCurrentUser); err != nil {
-		return bungo.CurrentUser{}, err
+		return bungo.Gamer{}, err
 	}
 
 	bungieNetUser := getMembershipDataForCurrentUser.Response.BungieNetUser
 	destinyMemberships := getMembershipDataForCurrentUser.Response.DestinyMemberships
 
 	destiny := args.Destiny
-	log.Debug("/User/GetMembershipsForCurrentUser -> ", bungieNetUser.DisplayName)
-	var characters []bungo.Character
+	log.Debug("/Gamer/GetMembershipsForCurrentUser -> ", bungieNetUser.DisplayName)
+	var characters []bungo.Guardian
 	for _, destinyMembership := range destinyMemberships {
 
 		getProfileResp, err := args.BungieClient.R().
@@ -61,14 +61,14 @@ func CurrentUser(args CurrentUserArgs) (out bungo.CurrentUser, err error) {
 			}).
 			Get(bungieApiUri + "/Destiny2/{membershipType}/Profile/{destinyMembershipId}/")
 		if err != nil {
-			return bungo.CurrentUser{}, err
+			return bungo.Gamer{}, err
 		}
 
 		getProfileRespRaw := getProfileResp.Body()
 
 		var getProfile bungo.GetProfile
 		if err := json.Unmarshal(getProfileRespRaw, &getProfile); err != nil {
-			return bungo.CurrentUser{}, err
+			return bungo.Gamer{}, err
 		}
 
 		profileData := getProfile.Response.Profile.Data
@@ -89,23 +89,23 @@ func CurrentUser(args CurrentUserArgs) (out bungo.CurrentUser, err error) {
 					"destinyMembershipId": destinyMembership.MembershipID,
 					"characterId":         characterId,
 				}).
-				Get(bungieApiUri + "/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/")
+				Get(bungieApiUri + "/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Guardian/{characterId}/")
 			if err != nil {
-				return bungo.CurrentUser{}, err
+				return bungo.Gamer{}, err
 			}
 
 			getCharacterRespRaw := getCharacterResp.Body()
 
 			var getCharacter bungo.GetCharacter
 			if err := json.Unmarshal(getCharacterRespRaw, &getCharacter); err != nil {
-				return bungo.CurrentUser{}, err
+				return bungo.Gamer{}, err
 			}
 
 			characterData := getCharacter.Response.Character.Data
 			equipmentItemsData := getCharacter.Response.Equipment.Data
 			inventoryItemsData := getCharacter.Response.Inventory.Data
 
-			log.Debug("/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Character/{characterId}/ -> ", characterData.CharacterID)
+			log.Debug("/Destiny2/{membershipType}/Profile/{destinyMembershipId}/Guardian/{characterId}/ -> ", characterData.CharacterID)
 			var equipped bungo.Outfit
 			for _, item := range equipmentItemsData.Items {
 
@@ -195,7 +195,7 @@ func CurrentUser(args CurrentUserArgs) (out bungo.CurrentUser, err error) {
 				}
 			}
 
-			characters = append(characters, bungo.Character{
+			characters = append(characters, bungo.Guardian{
 				Id:             characterData.CharacterID,
 				MembershipType: characterData.MembershipType,
 
@@ -209,10 +209,10 @@ func CurrentUser(args CurrentUserArgs) (out bungo.CurrentUser, err error) {
 		}
 	}
 
-	return bungo.CurrentUser{
+	return bungo.Gamer{
 		Name:         bungieNetUser.DisplayName,
 		MembershipId: bungieNetUser.MembershipID,
-		Characters:   characters,
+		Guardians:    characters,
 	}, nil
 }
 
@@ -227,7 +227,7 @@ type CurrentCharacterArgs struct {
 	Destiny          data.Content
 }
 
-func CurrentCharacter(args CurrentCharacterArgs) (out bungo.Character, err error) {
+func CurrentCharacter(args CurrentCharacterArgs) (out bungo.Guardian, err error) {
 	currentUser, err := CurrentUser(CurrentUserArgs{
 		OathClientId:     args.OathClientId,
 		OathClientSecret: args.OathClientSecret,
@@ -236,13 +236,13 @@ func CurrentCharacter(args CurrentCharacterArgs) (out bungo.Character, err error
 		Destiny:          args.Destiny,
 	})
 	if err != nil {
-		return bungo.Character{}, err
+		return bungo.Guardian{}, err
 	}
 
-	for _, character := range currentUser.Characters {
+	for _, character := range currentUser.Guardians {
 		if character.Id == args.Id && character.MembershipType == args.MembershipType {
 			return character, nil
 		}
 	}
-	return bungo.Character{}, errors.New("not found")
+	return bungo.Guardian{}, errors.New("not found")
 }
