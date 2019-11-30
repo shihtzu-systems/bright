@@ -37,7 +37,7 @@ var destinyCommand = &cobra.Command{
 					Timestamp: timestamp,
 				},
 				System: tower.System{
-					Id: viper.GetString("system.v2.name"),
+					Id: viper.GetString("system.v3.name"),
 				},
 				Serial: fmt.Sprintf("%s+on.%s.at.%s", version, datestamp, timestamp),
 
@@ -53,8 +53,8 @@ var destinyCommand = &cobra.Command{
 				Hack:   viper.GetBool("modes.v2.hack"),
 				Bnet:   viper.GetBool("modes.v2.bnet"),
 				Try:    viper.GetBool("modes.v2.try"),
-				Trace:  viper.GetBool("system.v2.trace"),
-				Debug:  viper.GetBool("system.v2.debug"),
+				Trace:  viper.GetBool("system.v3.trace"),
+				Debug:  viper.GetBool("system.v3.debug"),
 				Dad:    viper.GetBool("modifiers.v3.dad"),
 				Mayhem: viper.GetBool("modifiers.v3.mayhem"),
 
