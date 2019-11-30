@@ -36,13 +36,6 @@ func Serve(args ServeArgs) {
 	t := args.Tower
 	sessionStore := sessions.NewCookieStore(t.SessionSecret)
 
-	// bingo controller
-	bingo := BingoController{
-		SessionStore: sessionStore,
-		Tower:        t,
-	}
-	r.HandleFunc(BingoPath(), bingo.HandleRoot)
-
 	// hello controller
 	hello := HelloController{}
 	r.HandleFunc(HelloPath(), hello.HandleRoot)

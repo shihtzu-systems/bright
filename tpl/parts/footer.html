@@ -19,10 +19,6 @@
 <script src="/static/scripts/navbar.js?{{ .App.Version }}{{ .App.Datestamp }}{{ .App.Timestamp }}"></script>
 {{ end }}
 
-{{ define "bingo-scripts" }}
-<script src="/static/scripts/bingo.js?{{ .App.Version }}{{ .App.Datestamp }}{{ .App.Timestamp }}"></script>
-{{ end }}
-
 {{ define "google-analytics" }}
 {{ if ne . "" }}
  <!-- Global site tag (gtag.js) - Google Analytics -->
