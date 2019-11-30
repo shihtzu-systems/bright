@@ -49,7 +49,6 @@ COPY ./app.timestamp /app.timestamp
 COPY ./app.version /app.version
 
 # static files
-COPY ./templates /templates
 COPY ./tpl /tpl
 COPY ./static /static
 
